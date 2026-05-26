@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d8aced6e1d4470c408ba6018f71fa776
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 159992
+  packageName: Jupiter - Procedural Sky Shader & Day Night Cycle
+  packageVersion: 1.3.0.3
+  assetPath: Assets/PinwheelStudio/Jupiter - Procedural Sky/Sample/Scenes/StarryNight/SkyProfile-328763143758421736.asset
+  uploadId: 857994

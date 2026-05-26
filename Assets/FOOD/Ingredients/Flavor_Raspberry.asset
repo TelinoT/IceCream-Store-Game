@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9a85ce448ba047f4bb931663c0714ec, type: 3}
+  m_Name: Flavor_Raspberry
+  m_EditorClassIdentifier: 
+  ingredientName: Raspberry
+  type: 1
+  prefab: {fileID: 4380028860110113750, guid: 12cb0e374740f824781289474b09abf4, type: 3}
+  icon: {fileID: 0}
+  stackHeight: 0.05

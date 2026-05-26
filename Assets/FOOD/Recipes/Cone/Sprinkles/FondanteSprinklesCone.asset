@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 896f5039bb6d44370a5d30df024e3c15, type: 3}
+  m_Name: FondanteSprinklesCone
+  m_EditorClassIdentifier: 
+  recipeName: Fondante Sprinkles Cone
+  baseCone: {fileID: 11400000, guid: 3a7dcc2f6c91c439f9d58b7007e838d4, type: 2}
+  flavors:
+  - {fileID: 11400000, guid: 0ac8d77aad4a84960bcdce2da8f14895, type: 2}
+  toppings:
+  - {fileID: 11400000, guid: 873f765eb4dbe4022866fb806db6018b, type: 2}
+  price: 3
+  orderLines:
+  - 'Can I have a fondente cone with sprinkles, please? '
+  - "Fondente in a cone, and don\u2019t forget the sprinkles! "
+  - "I\u2019d love a fondente cone topped with sprinkles! "
+  correctResponseLines:
+  - Perfect! Just what I wanted!
+  - Yay! That looks delicious!
+  - "Mmm\u2026 thank you so much!"
+  wrongResponseLines:
+  - "Oops\u2026 that\u2019s not what I ordered."
+  - Close, but not quite.
+  - "Uh\u2026 I asked for fondente with sprinkles, remember?"
