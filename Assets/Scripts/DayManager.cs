@@ -206,6 +206,8 @@ public class DayManager : MonoBehaviour
         }
         
         DayTimeUI.SetActive(false);
+        
+        TaskManager.Instance.GenerateTomorrowTasks();
     }
 
     private IEnumerator TickUpStats(int targetCoins, int targetXP, int finalBank)

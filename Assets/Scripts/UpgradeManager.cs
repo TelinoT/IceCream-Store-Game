@@ -54,6 +54,7 @@ public class UpgradeManager : MonoBehaviour
             PlayerPrefs.SetInt("Upgrade_" + upgrade.upgradeID, currentLevel + 1);
             PlayerPrefs.Save();
             AudioManager.Instance.Play("BuyButton");
+            TaskManager.Instance.ReportProgress(TaskGoalType.BuyUpgrades, 1);
             return true;
         }
 

@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9a85ce448ba047f4bb931663c0714ec, type: 3}
+  m_Name: Base_Cup
+  m_EditorClassIdentifier: 
+  ingredientName: Cup
+  type: 0
+  prefab: {fileID: 4550540801311066694, guid: 609e009db5cbc0c408058aa4c1d6f4ca, type: 3}
+  icon: {fileID: 0}
+  stackHeight: 0.1

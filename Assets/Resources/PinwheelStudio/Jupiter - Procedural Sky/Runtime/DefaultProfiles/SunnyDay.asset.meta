@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b4b856d2b3d3c164fbcf5c87fc2abee2
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 159992
+  packageName: Jupiter - Procedural Sky Shader & Day Night Cycle
+  packageVersion: 1.3.0.3
+  assetPath: Assets/PinwheelStudio/Jupiter - Procedural Sky/Runtime/DefaultProfiles/SunnyDay.asset
+  uploadId: 857994

@@ -37,11 +37,19 @@ public class EconomyManager : MonoBehaviour
         UpdateCoinText();
     }
 
-    /*void Update()
+    void Update()
     {
-        if (coinText != null)
+        /*if (coinText != null)
             coinText.text = PlayerPrefs.GetInt("Coins", 0) + " $$";
-    }*/
+            */
+
+        if (Input.GetKey(KeyCode.M))
+        {
+            coins += 1;
+            SaveEconomy();
+            UpdateCoinText();
+        }
+    }
     
     private int displayedCoins = 0;
     
@@ -93,10 +101,12 @@ public class EconomyManager : MonoBehaviour
         
         coins += coinAmount;
         xp += xpAmount;
+        
+        TaskManager.Instance.ReportProgress(TaskGoalType.EarnMoney, coinAmount);
 
         SaveEconomy();
 
-        Debug.Log($"💰 +{coinAmount} coins | ⭐ +{xpAmount} XP");
+        //Debug.Log($"💰 +{coinAmount} coins | ⭐ +{xpAmount} XP");
         UpdateCoinText();
         
         if (floatingTextPrefab != null)

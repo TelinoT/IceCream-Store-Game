@@ -1,0 +1,31 @@
+fileFormatVersion: 2
+guid: 8eb84f6c3b46347789502e8294d90c5b
+timeCreated: 1563736713
+licenseType: Store
+AudioImporter:
+  externalObjects: {}
+  serializedVersion: 6
+  defaultSettings:
+    loadType: 0
+    sampleRateSetting: 0
+    sampleRateOverride: 44100
+    compressionFormat: 1
+    quality: 1
+    conversionMode: 0
+  platformSettingOverrides: {}
+  forceToMono: 0
+  normalize: 1
+  preloadAudioData: 1
+  loadInBackground: 0
+  ambisonic: 0
+  3D: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 149975
+  packageName: FREE Casual Island Game Loops
+  packageVersion: 1.0
+  assetPath: Assets/AS_Casual_Island_Game_Loops/The Thinker Loop/T_No_Drums.wav
+  uploadId: 321655

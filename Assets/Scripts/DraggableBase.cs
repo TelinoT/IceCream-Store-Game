@@ -226,6 +226,8 @@ public class DraggableBase : MonoBehaviour
         
         AudioManager.Instance.Play("SprinklesDrop");
         
+        TaskManager.Instance.ReportProgress(TaskGoalType.AddSprinkles, 1);
+        
         Destroy(gameObject);
     }
 

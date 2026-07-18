@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 7aee1f13740ef4c438b6a59a60558865
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 159992
+  packageName: Jupiter - Procedural Sky Shader & Day Night Cycle
+  packageVersion: 1.3.0.3
+  assetPath: Assets/PinwheelStudio/Jupiter - Procedural Sky/Editor/Scripts/Utilities/JCubemapCreatorWindow.cs
+  uploadId: 857994

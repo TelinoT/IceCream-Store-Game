@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: f0303c57b5706684594ad27c88d2a37d
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 159992
+  packageName: Jupiter - Procedural Sky Shader & Day Night Cycle
+  packageVersion: 1.3.0.3
+  assetPath: Assets/PinwheelStudio/Jupiter - Procedural Sky/Runtime/Shaders/CGIncludes/JCommon.cginc
+  uploadId: 857994

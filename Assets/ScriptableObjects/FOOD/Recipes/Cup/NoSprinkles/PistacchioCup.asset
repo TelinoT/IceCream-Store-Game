@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 896f5039bb6d44370a5d30df024e3c15, type: 3}
+  m_Name: PistacchioCup
+  m_EditorClassIdentifier: 
+  recipeName: Postacchio Cup
+  baseCone: {fileID: 11400000, guid: aea70e79325584089bfadca0379301b5, type: 2}
+  flavors:
+  - {fileID: 11400000, guid: aad91707b8976476c9dfdb2c3f6686a3, type: 2}
+  toppings: []
+  price: 2
+  orderLines:
+  - 'One pistachio cup, please. No sprinkles. '
+  - 'Can I get pistachio in a cup? '
+  - "I\u2019m craving a pistachio cup, keep it simple. "
+  correctResponseLines:
+  - Perfect! Just what I wanted!
+  - Yay! That looks delicious!
+  - "Mmm\u2026 thank you so much!"
+  wrongResponseLines:
+  - "Oops\u2026 that\u2019s not what I ordered."
+  - Close, but not quite.
+  - "Uh\u2026 I asked for pistachio with sprinkles, remember?"

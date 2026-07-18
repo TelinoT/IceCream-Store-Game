@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ef0c7a1c7205a274c8ae147b1fc68287
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 8900000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 159992
+  packageName: Jupiter - Procedural Sky Shader & Day Night Cycle
+  packageVersion: 1.3.0.3
+  assetPath: Assets/PinwheelStudio/Jupiter - Procedural Sky/Sample/Cubemaps/Cubemap-Moon.cubemap
+  uploadId: 857994

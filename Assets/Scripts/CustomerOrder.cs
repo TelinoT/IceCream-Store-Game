@@ -23,7 +23,6 @@ public class CustomerOrder : MonoBehaviour
     private float currentPatience;
     private bool orderHandled = false;
     
-    // --- NEW: A switch to hold the timer back ---
     private bool isTimerActive = false;
     
     void Start()
@@ -41,7 +40,6 @@ public class CustomerOrder : MonoBehaviour
             speechText.text = line;
         }
 
-        // --- NEW: Start the 1-second delay ---
         StartCoroutine(StartPatienceTimer());
     }
 
@@ -137,6 +135,13 @@ public class CustomerOrder : MonoBehaviour
             
             AudioManager.Instance.Play("Success");
             StartCoroutine(HappyHop());
+
+            if (IceCreamStack.hasCone)
+            {
+                TaskManager.Instance.ReportProgress(TaskGoalType.ServeCones, 1);
+            }
+            
+            TaskManager.Instance.ReportProgress(TaskGoalType.ServeCustomers, 1);
         }
         else
         {
