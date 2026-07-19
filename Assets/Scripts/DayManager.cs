@@ -302,6 +302,11 @@ public class DayManager : MonoBehaviour
         if (nightHubPanel != null) nightHubPanel.SetActive(false);
         if (shopManager != null) shopManager.EnterShopMode();
     }
+
+    public void CloseNightHubPanel()
+    {
+        if (nightHubPanel != null) nightHubPanel.SetActive(false);
+    }
     
     public void OpenUpgradesFromNightHub()
     {
@@ -370,6 +375,8 @@ public class DayManager : MonoBehaviour
         DayTimeUI.SetActive(true);
 
         IceCreamStack.Instance.ResetStack(); 
+        
+        TaskManager.Instance.RolloverToNewDay();
         
         // Start the day immediately, but pass FALSE so it doesn't instantly snap the lights!
         StartDay(false); 

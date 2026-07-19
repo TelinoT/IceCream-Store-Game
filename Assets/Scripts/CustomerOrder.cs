@@ -88,14 +88,35 @@ public class CustomerOrder : MonoBehaviour
         if (orderHandled) return;
         orderHandled = true;
         
+        if (Buttons.Instance != null)
+        {
+            Buttons.Instance.currentCustomer = null; 
+            if (Buttons.Instance.serveUICanvas != null)
+            {
+                Buttons.Instance.serveUICanvas.SetActive(false);
+            }
+        }
+        
         StartCoroutine(HandleOrderWithDelay(stack));
     }
 
     private IEnumerator HandleOrderWithDelay(IceCreamStack stack)
     {
         if (PatienceUIManager.Instance != null) PatienceUIManager.Instance.HideSlider();
+        
+        if (IceCreamStack.hasCone)
+        {
+            TaskManager.Instance.ReportProgress(TaskGoalType.ServeCones, 1);
+        }
 
         bool correct = stack.MatchesRecipe(desiredRecipe);
+        
+        TaskManager.Instance.ReportProgress(TaskGoalType.ServeCustomers, 1);
+
+        if (correct)
+        {
+            TaskManager.Instance.ReportProgress(TaskGoalType.SellPerfectIceCream, 1);
+        }
         
         bool activatedSweetTalker = false;
         
@@ -135,13 +156,6 @@ public class CustomerOrder : MonoBehaviour
             
             AudioManager.Instance.Play("Success");
             StartCoroutine(HappyHop());
-
-            if (IceCreamStack.hasCone)
-            {
-                TaskManager.Instance.ReportProgress(TaskGoalType.ServeCones, 1);
-            }
-            
-            TaskManager.Instance.ReportProgress(TaskGoalType.ServeCustomers, 1);
         }
         else
         {

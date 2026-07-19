@@ -93,6 +93,11 @@ public class TaskUIManager : MonoBehaviour
     {
         isAnimating = true;
         tasksPanelRect.anchoredPosition = offScreenBottom;
+        
+        if (DayManager.Instance != null)
+        {
+            DayManager.Instance.CloseNightHubPanel();
+        }
 
         float elapsed = 0f;
         while (elapsed < slideDuration)

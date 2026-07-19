@@ -16,7 +16,11 @@ public class CustomerSpawner : MonoBehaviour
 
         Buttons.Instance.currentCustomer = order;
         
+        if (Buttons.Instance != null) 
+        {
+            Buttons.Instance.UpdateServeUI();
+        }
+        
         AudioManager.Instance.Play("Talking");
-
     }
 }

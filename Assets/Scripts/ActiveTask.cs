@@ -16,9 +16,10 @@ public class ActiveTask
         isRewardClaimed = false;
     }
 
-    public void AddProgress(int amount)
+    // --- CHANGED: Now returns true if the task was JUST completed ---
+    public bool AddProgress(int amount)
     {
-        if (isCompleted) return;
+        if (isCompleted) return false;
 
         currentProgress += amount;
 
@@ -26,9 +27,9 @@ public class ActiveTask
         {
             currentProgress = data.targetAmount;
             isCompleted = true;
-            
-            // Optional: Play a tiny pop sound when a task completes mid-day!
-            // if (AudioManager.Instance != null) AudioManager.Instance.Play("TaskComplete");
+            return true; // We just finished it!
         }
+        
+        return false; // Still working on it
     }
 }

@@ -13,6 +13,8 @@ public enum TaskGoalType
 [CreateAssetMenu(fileName = "NewTask", menuName = "Shop/TaskData")]
 public class TaskData : ScriptableObject
 {
+    public string taskID;
+    
     [Header("Settings")]
     public TaskType taskType;
     public TaskGoalType goalType;

@@ -34,8 +34,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 382.4, y: 0}
-  m_SizeDelta: {x: 100, y: 50}
+  m_AnchoredPosition: {x: 358.48605, y: 0}
+  m_SizeDelta: {x: 121.5007, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8942188867889119548
 CanvasRenderer:
@@ -96,11 +96,11 @@ MonoBehaviour:
   m_fontSize: 30
   m_fontSizeBase: 30
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_fontSizeMax: 30
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 4
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -150,6 +150,8 @@ GameObject:
   - component: {fileID: 3126058732577505516}
   - component: {fileID: 5741790961735326542}
   - component: {fileID: 8999303251038994672}
+  - component: {fileID: 4467996348037575588}
+  - component: {fileID: 2544901698016788345}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -259,6 +261,36 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4467996348037575588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3143443076282517180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Shadow
+  m_EffectColor: {r: 0.22745098, g: 0.16470589, b: 0.1882353, a: 0.39215687}
+  m_EffectDistance: {x: 2, y: -3}
+  m_UseGraphicAlpha: 1
+--- !u!114 &2544901698016788345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3143443076282517180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2de7b4cd8c3f5472f921a699bce28879, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pressScale: 0.9
+  duration: 0.1
+  clickSound: {fileID: 0}
 --- !u!1 &6388349318707796906
 GameObject:
   m_ObjectHideFlags: 0
@@ -493,9 +525,9 @@ MonoBehaviour:
   m_fontSize: 30
   m_fontSizeBase: 30
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_fontSizeMax: 30
   m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 512
@@ -685,6 +717,7 @@ GameObject:
   - component: {fileID: 8654675653566053384}
   - component: {fileID: 4779530953696007575}
   - component: {fileID: 4946773893513414501}
+  - component: {fileID: 668126941157294715}
   m_Layer: 5
   m_Name: TaskUIPrefab
   m_TagString: Untagged
@@ -770,3 +803,18 @@ MonoBehaviour:
   rewardText: {fileID: 3680297579120737476}
   claimButton: {fileID: 8999303251038994672}
   claimButtonText: {fileID: 9029684290933818224}
+--- !u!114 &668126941157294715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8593378533181450870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Shadow
+  m_EffectColor: {r: 0.22745098, g: 0.16470589, b: 0.1882353, a: 0.39215687}
+  m_EffectDistance: {x: 2, y: -3}
+  m_UseGraphicAlpha: 1

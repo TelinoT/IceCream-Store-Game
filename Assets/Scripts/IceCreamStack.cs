@@ -1,30 +1,62 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 
 public class IceCreamStack : MonoBehaviour
 {
     public List<IceCreamIngredient> addedIngredients = new();
     public List<GameObject> addedObjects = new();
+    
+    [Header("Teleportation Anchors")]
     public Transform visualParent;
+    public Transform frontCounterAnchor; 
 
     public static bool hasCone;
     
     private float currentHeight = 0f;
     
+    private Vector3 originalBackPos;
+    private Quaternion originalBackRot;
+    
     public static IceCreamStack Instance;
 
-    
     void Awake()
     {
         Instance = this;
         hasCone = false;
     }
 
+    void Start()
+    {
+        // Memorize the exact spot the workstation parent starts at
+        if (visualParent != null)
+        {
+            originalBackPos = visualParent.position;
+            originalBackRot = visualParent.rotation;
+        }
+    }
+
+    // --- NEW: Teleportation Logic ---
+    public void MoveToCounter(bool toFront)
+    {
+        if (visualParent != null)
+        {
+            if (toFront && frontCounterAnchor != null)
+            {
+                visualParent.position = frontCounterAnchor.position;
+                visualParent.rotation = frontCounterAnchor.rotation;
+            }
+            else
+            {
+                // Snap exactly back to where it was initially built
+                visualParent.position = originalBackPos;
+                visualParent.rotation = originalBackRot;
+            }
+        }
+    }
+
     public bool HasBase() => addedIngredients.Any(i => i.type == IngredientType.Base);
 
-    // Use this when adding from base dragging (you already have the visual object)
     public void AddIngredient(IceCreamIngredient ingredient, GameObject visualObj)
     {
         if (ingredient.type == IngredientType.Base && HasBase()) return;
@@ -32,16 +64,10 @@ public class IceCreamStack : MonoBehaviour
 
         addedIngredients.Add(ingredient);
         addedObjects.Add(visualObj);
-
-        /*if (visualObj != null)
-        {
-            visualObj.transform.SetParent(visualParent);
-            visualObj.transform.localPosition = Vector3.zero;
-            currentHeight = 0f;
-        }*/
+        
+        if (Buttons.Instance != null) Buttons.Instance.UpdateServeUI();
     }
 
-    // Use this when adding from flavor/topping dispensers
     public void AddIngredient(IceCreamIngredient ingredient)
     {
         if (ingredient.type != IngredientType.Base && !HasBase()) return;
@@ -54,32 +80,21 @@ public class IceCreamStack : MonoBehaviour
 
             GameObject obj = Instantiate(ingredient.prefab, visualParent);
             obj.transform.localPosition = new Vector3(0, currentHeight, 0);
-
-            //obj.transform.localRotation = Quaternion.Euler(0, Random.Range(-10f, 10f), 0);
             
             obj.transform.localRotation = Quaternion.Euler(
-                Random.Range(-8f, 8f),   // Slight tilt forward/back
-                Random.Range(0f, 360f),  // Random facing direction
-                Random.Range(-8f, 8f)    // Slight tilt left/right
+                Random.Range(-8f, 8f),   
+                Random.Range(0f, 360f),  
+                Random.Range(-8f, 8f)    
             );
         }
+        
+        if (Buttons.Instance != null) Buttons.Instance.UpdateServeUI();
     }
 
     public void AddSprinkles()
     {
-        //Debug.Log("Adding sprinkles: IceCreamStack");
-        /*foreach (var element in addedObjects)
-        {
-            if (element.transform.childCount > 0)
-            {
-                Transform firstChild = element.transform.GetChild(0);
-                firstChild.gameObject.SetActive(true);
-            }
-        }*/
-        
         for (int i = 0; i < addedObjects.Count; i++)
         {
-            // Skip if this is the Cone or Cup (Base)
             if (addedIngredients[i].type == IngredientType.Base) continue;
 
             GameObject element = addedObjects[i];

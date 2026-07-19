@@ -7,6 +7,9 @@ public class Buttons : MonoBehaviour
     public CustomerOrder currentCustomer;
     public IceCreamStack stack;
     
+    [Header("World Space UI")]
+    public GameObject serveUICanvas; 
+    
     [Header("Optional Target Transform Settings")]
     public Vector3 targetPosition;
     public Vector3 targetRotationEuler = new Vector3(0f, 180f, 0f);
@@ -15,16 +18,34 @@ public class Buttons : MonoBehaviour
     private Vector3 originalRotationEuler;
     private bool isRotated = false;
 
+    void Awake()
+    {
+        Instance = this;
+    }
+    
+    public void UpdateServeUI()
+    {
+        if (serveUICanvas != null)
+        {
+            // Only show the button if there is a customer AND the plate is not empty
+            bool hasCustomer = currentCustomer != null;
+            bool hasIceCream = IceCreamStack.Instance != null && IceCreamStack.Instance.addedIngredients.Count > 0;
+            
+            serveUICanvas.SetActive(hasCustomer && hasIceCream);
+        }
+    }
+
     void Start()
     {
-        // Cache the original transform at start
         originalPosition = Camera.main.transform.position;
         originalRotationEuler = Camera.main.transform.eulerAngles;
+        
+        // Ensure the button is hidden when the game starts
+        if (serveUICanvas != null) serveUICanvas.SetActive(false);
     }
 
     public void RotateCamera180()
     {
-        // --- NEW: Force the player to drop whatever they are holding! ---
         if (MobileInputManager.Instance != null)
         {
             MobileInputManager.Instance.CancelDrag();
@@ -39,8 +60,10 @@ public class Buttons : MonoBehaviour
             Camera.main.transform.eulerAngles = targetRotationEuler;
 
             isRotated = true;
-            
             CameraSwipeMover.Instance.currentInput = -1;
+            
+            // Move stack back to the prep station
+            if (IceCreamStack.Instance != null) IceCreamStack.Instance.MoveToCounter(false);
         }
         else
         {
@@ -49,6 +72,9 @@ public class Buttons : MonoBehaviour
             isRotated = false;
             
             CameraSwipeMover.Instance.currentInput = 1;
+            
+            // Move stack to the front customer counter
+            if (IceCreamStack.Instance != null) IceCreamStack.Instance.MoveToCounter(true);
         }
     }
     
@@ -72,18 +98,12 @@ public class Buttons : MonoBehaviour
         AudioManager.Instance.Play("DeleteButton");
     }
 
-    void Awake()
-    {
-        Instance = this;
-    }
-
     public void Serve()
     {
         if (currentCustomer != null && stack != null)
         {
             currentCustomer.ReceiveOrder(stack);
         }
-        
-        RotateCamera180();
+        // No longer forcing RotateCamera180() here!
     }
 }
