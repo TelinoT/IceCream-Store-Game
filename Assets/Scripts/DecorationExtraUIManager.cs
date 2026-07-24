@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
+using System.Collections.Generic;
 
 public class DecorationExtraUIManager : MonoBehaviour
 {
@@ -13,10 +15,26 @@ public class DecorationExtraUIManager : MonoBehaviour
     private DecorationObject currentlySelected = null;
     private GameObject currentBuyButton = null;
     private GameObject currentToggleButton = null;
-
+    
+    private Dictionary<string, Vector3> originalScales = new Dictionary<string, Vector3>();
+    private Dictionary<string, Vector3> originalPositions = new Dictionary<string, Vector3>();
+    
+    private Coroutine activePopCoroutine = null;
+    private DecorationObject lastAnimatedDeco = null;
+    
     public void Setup()
     {
         allDecorations = FindObjectsOfType<DecorationObject>(true);
+        
+        foreach (var deco in allDecorations)
+        {
+            if (!originalScales.ContainsKey(deco.DecorationID))
+            {
+                originalScales.Add(deco.DecorationID, deco.transform.localScale);
+                originalPositions.Add(deco.DecorationID, deco.transform.localPosition);
+            }
+        }
+        
         ShowCategory(currentCategory);
     }
 
@@ -70,7 +88,22 @@ foreach (var deco in allDecorations)
                 
                 HideUnownedSceneDecorations();
                 deco.Preview(true);
+                
+                if (activePopCoroutine != null) 
+                {
+                    StopCoroutine(activePopCoroutine);
+                }
+                
+                if (lastAnimatedDeco != null && lastAnimatedDeco != deco)
+                {
+                    // Snap the previously clicked item back to safety
+                    lastAnimatedDeco.transform.localScale = originalScales[lastAnimatedDeco.DecorationID];
+                    lastAnimatedDeco.transform.localPosition = originalPositions[lastAnimatedDeco.DecorationID];
+                }
 
+                lastAnimatedDeco = deco;
+                activePopCoroutine = StartCoroutine(CleanScalePop(deco.transform, originalScales[deco.DecorationID], originalPositions[deco.DecorationID]));
+                
                 if (!deco.IsBought())
                 {
                     // --- APPLY DISCOUNTED PRICE HERE ---
@@ -158,5 +191,84 @@ foreach (var deco in allDecorations)
         {
             HideUnownedSceneDecorations();
         }
+    }
+    
+    // --- UPDATED: The Heartbeat Pulse Coroutine ---
+    /*private IEnumerator JellyPop(Transform target, Vector3 targetScale)
+    {
+        float duration = 0.3f; // Snappy and quick
+        float elapsed = 0f;
+        
+        // Immediately make sure it is visible and at the correct starting scale
+        target.localScale = targetScale;
+
+        while (elapsed < duration)
+        {
+            // Use unscaledDeltaTime so it plays smoothly while the shop is paused
+            elapsed += Time.unscaledDeltaTime; 
+            float t = elapsed / duration;
+            
+            // Mathf.Sin creates a perfect curve that goes from 0, peaks at 1, and goes back to 0.
+            // We multiply by 0.15f to give it a 15% size boost at the peak of the pulse.
+            float popMultiplier = 1f + (Mathf.Sin(t * Mathf.PI) * 0.15f);
+
+            // Apply the safe, relative scale
+            target.localScale = targetScale * popMultiplier;
+            yield return null;
+        }
+        
+        // Guarantee it perfectly snaps back to the exact original scale
+        target.localScale = targetScale;
+    }*/
+    
+    /*private IEnumerator JellyPop(Transform target, Vector3 baseScale)
+    {
+        float duration = 0.3f; // Quick and snappy
+        float elapsed = 0f;
+        
+        // Target a peak size 15% larger than normal
+        Vector3 peakScale = baseScale * 1.15f; 
+
+        while (elapsed < duration)
+        {
+            // Use unscaledDeltaTime to ignore the paused shop menu
+            elapsed += Time.unscaledDeltaTime; 
+            float t = elapsed / duration;
+            
+            // Mathf.Sin creates a perfect curve going from 0 to 1 and back to 0
+            float curve = Mathf.Sin(t * Mathf.PI);
+
+            // Smoothly Lerp between the base scale and the peak scale
+            target.localScale = Vector3.Lerp(baseScale, peakScale, curve);
+            
+            yield return null;
+        }
+        
+        // Guarantee it snaps exactly back to normal at the end
+        target.localScale = baseScale;
+    }*/
+    
+    private IEnumerator CleanScalePop(Transform target, Vector3 baseScale, Vector3 basePosition)
+    {
+        float duration = 0.3f; 
+        float elapsed = 0f;
+        Vector3 peakScale = baseScale * 1.15f; 
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime; 
+            float t = elapsed / duration;
+            float curve = Mathf.Sin(t * Mathf.PI);
+
+            target.localScale = Vector3.Lerp(baseScale, peakScale, curve);
+            
+            // Force the position to stay anchored exactly where it belongs
+            target.localPosition = basePosition; 
+            
+            yield return null;
+        }
+        
+        target.localScale = baseScale;
+        target.localPosition = basePosition; 
     }
 }

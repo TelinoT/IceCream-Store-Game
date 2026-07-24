@@ -15,6 +15,6 @@ MonoBehaviour:
   taskID: dailyServe
   taskType: 0
   goalType: 0
-  targetAmount: 1
+  targetAmount: 4
   coinReward: 30
   xpReward: 0
