@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9a85ce448ba047f4bb931663c0714ec, type: 3}
   m_Name: Flavor_Fondante
   m_EditorClassIdentifier: 
-  ingredientName: Fondante
+  ingredientName: Fondente
   type: 1
   prefab: {fileID: 8328587732403449730, guid: b3accc9a989708b4a8f534372d159a20, type: 3}
   icon: {fileID: 0}
   stackHeight: 0.05
+  price: 2

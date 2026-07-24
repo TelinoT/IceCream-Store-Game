@@ -17,3 +17,4 @@ MonoBehaviour:
   prefab: {fileID: 3910503993437407503, guid: 8cb2a5b6f828b3b4aad6bbf1e58f45f7, type: 3}
   icon: {fileID: 0}
   stackHeight: 0.05
+  price: 2

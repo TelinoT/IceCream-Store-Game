@@ -17,6 +17,9 @@ public class DraggableBase : MonoBehaviour
     
     public float yOffsetCup = 0.01f; // small height above surface
     public float yOffsetCone = 0.01f; // small height above surface
+    
+    private float nudgeX = 0f;
+    private float nudgeZ = 0f;
 
     // Heights from which to raycast downward for Y pos adjustment
     public float raycastHeightOffset = 5f;
@@ -47,6 +50,22 @@ public class DraggableBase : MonoBehaviour
             else
             {
                 yOffset = yOffsetCup;
+            }
+            
+            int flavorCount = stack.GetFlavorCount();
+            if (flavorCount == 1)
+            {
+                // 2nd Scoop: Pull the drag plane down so it visually overlaps
+                yOffset += (-ingredient.stackHeight + 0.05f);
+                
+                // Roll a random horizontal nudge to apply during the drag
+                nudgeX = UnityEngine.Random.Range(-0.12f, 0.12f);
+                nudgeZ = UnityEngine.Random.Range(-0.12f, 0.12f);
+            }
+            else if (flavorCount >= 2)
+            {
+                // 3rd Scoop: Push the drag plane up so it sits on top
+                yOffset += (ingredient.stackHeight * 0.5f);
             }
         }
         

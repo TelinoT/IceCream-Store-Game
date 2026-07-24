@@ -8649,26 +8649,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 051ee01e9734d482c840c8b44182e651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  possibleRecipes:
-  - {fileID: 11400000, guid: 073b8f4b3a9734fd88885129192e130d, type: 2}
-  - {fileID: 11400000, guid: 8b28710978d074cc79dce939f06fc87d, type: 2}
-  - {fileID: 11400000, guid: c1394f52044a24a90a4388891d2e57e7, type: 2}
-  - {fileID: 11400000, guid: 771837d058390482faf70d188c0397dc, type: 2}
-  - {fileID: 11400000, guid: cef2263028d72478ca2f21fdf1901595, type: 2}
-  - {fileID: 11400000, guid: 30021a5daaacb450bb913e17afd7ed37, type: 2}
-  - {fileID: 11400000, guid: 5dc4f54c7661f44e4ae50f412d59f9d4, type: 2}
-  - {fileID: 11400000, guid: 9cd3b31e5a6b24aa4a92543d2678a250, type: 2}
-  - {fileID: 11400000, guid: 1cdd0eb9d87c647e38c748cc38242f8f, type: 2}
-  - {fileID: 11400000, guid: fd4e1d34c2b3b4412acdcdca927bd7d8, type: 2}
-  - {fileID: 11400000, guid: d679fe39d759b40c7bf85c91f18e9004, type: 2}
-  - {fileID: 11400000, guid: c70396baf3839410f9d8b6fefaf7f547, type: 2}
-  - {fileID: 11400000, guid: d1b2ae7c7e6f64b47ab8da64649671c0, type: 2}
-  - {fileID: 11400000, guid: 948d71e6388574615b5670902aeb17f2, type: 2}
-  - {fileID: 11400000, guid: 83faecc6df9c3471ea8a3680100deeb0, type: 2}
-  - {fileID: 11400000, guid: be49cd70bb32e4676b5029585747eb9f, type: 2}
   customerPrefab: {fileID: 1978958919777931134, guid: 65ce1a502648642c2bca1d217d166bb7,
     type: 3}
   spawnPoint: {fileID: 416896710}
+  availableBases:
+  - {fileID: 11400000, guid: 3a7dcc2f6c91c439f9d58b7007e838d4, type: 2}
+  - {fileID: 11400000, guid: 3a7dcc2f6c91c439f9d58b7007e838d4, type: 2}
+  availableFlavors:
+  - {fileID: 11400000, guid: d5ae678c53d294717ab3554c13dbea74, type: 2}
+  - {fileID: 11400000, guid: 0ac8d77aad4a84960bcdce2da8f14895, type: 2}
+  - {fileID: 11400000, guid: aad91707b8976476c9dfdb2c3f6686a3, type: 2}
+  - {fileID: 11400000, guid: 849978bed9f964021a4ea156828dbbbb, type: 2}
+  availableToppings:
+  - {fileID: 11400000, guid: 873f765eb4dbe4022866fb806db6018b, type: 2}
+  baseAndFlavorTemplates:
+  - I'd like a {0} with {1}, please!
+  - Can I get a {1} {0}?
+  - One {0} of {1}, thanks!
+  - I'm craving some {1}. Put it in a {0}!
+  toppingTemplates:
+  - ' Oh, and add {2} on top!'
+  - ' With some {2} please.'
+  - ' And throw some {2} on there.'
 --- !u!4 &416896710
 Transform:
   m_ObjectHideFlags: 0
@@ -48183,8 +48185,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DayManager
   upgradeManagerUI: {fileID: 1378584522}
   currentDay: 1
-  baseCustomersPerDay: 0
-  customerVariance: 0
+  baseCustomersPerDay: 8
+  customerVariance: 2
   openingHour: 9
   closingHour: 18
   baseClockSpeed: 0.15

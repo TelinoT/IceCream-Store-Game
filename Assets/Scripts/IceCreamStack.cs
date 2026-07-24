@@ -57,6 +57,18 @@ public class IceCreamStack : MonoBehaviour
 
     public bool HasBase() => addedIngredients.Any(i => i.type == IngredientType.Base);
 
+    //old placing logic for just one scoop
+    /*public void AddIngredient(IceCreamIngredient ingredient, GameObject visualObj)
+    {
+        if (ingredient.type == IngredientType.Base && HasBase()) return;
+        if (ingredient.type != IngredientType.Base && !HasBase()) return;
+
+        addedIngredients.Add(ingredient);
+        addedObjects.Add(visualObj);
+        
+        if (Buttons.Instance != null) Buttons.Instance.UpdateServeUI();
+    }*/
+    
     public void AddIngredient(IceCreamIngredient ingredient, GameObject visualObj)
     {
         if (ingredient.type == IngredientType.Base && HasBase()) return;
@@ -68,18 +80,64 @@ public class IceCreamStack : MonoBehaviour
         if (Buttons.Instance != null) Buttons.Instance.UpdateServeUI();
     }
 
+    // --- NEW: Helper method for DraggableBase to check the stack ---
+    public int GetFlavorCount()
+    {
+        int count = 0;
+        foreach (var item in addedIngredients)
+        {
+            if (item.type == IngredientType.Flavor) count++;
+        }
+        return count;
+    }
+
     public void AddIngredient(IceCreamIngredient ingredient)
     {
         if (ingredient.type != IngredientType.Base && !HasBase()) return;
+
+        // --- NEW: Count how many scoops we already have before adding this one ---
+        int currentFlavorCount = addedIngredients.Count(i => i.type == IngredientType.Flavor);
 
         addedIngredients.Add(ingredient);
 
         if (ingredient.prefab != null && visualParent != null)
         {
-            currentHeight += ingredient.stackHeight;
+            float offsetX = 0f;
+            float offsetZ = 0f;
+
+            if (ingredient.type == IngredientType.Flavor)
+            {
+                if (currentFlavorCount == 0)
+                {
+                    // 1st Scoop: Normal height increase
+                    currentHeight += ingredient.stackHeight;
+                }
+                else if (currentFlavorCount == 1)
+                {
+                    // 2nd Scoop: OVERLAPS with the 1st! 
+                    // We barely increase height (0.05f) just to prevent graphical Z-fighting.
+                    currentHeight += 0.05f; 
+                    
+                    // Nudge it slightly to the side so the two scoops look nestled together
+                    offsetX = Random.Range(-0.12f, 0.12f);
+                    offsetZ = Random.Range(-0.12f, 0.12f);
+                }
+                else if (currentFlavorCount >= 2)
+                {
+                    // 3rd Scoop (or more): Pushed up perfectly on top of the first two
+                    currentHeight += ingredient.stackHeight;
+                }
+            }
+            else
+            {
+                // Bases and Toppings stack normally
+                currentHeight += ingredient.stackHeight;
+            }
 
             GameObject obj = Instantiate(ingredient.prefab, visualParent);
-            obj.transform.localPosition = new Vector3(0, currentHeight, 0);
+            
+            // Apply the height and the new offset
+            obj.transform.localPosition = new Vector3(offsetX, currentHeight, offsetZ);
             
             obj.transform.localRotation = Quaternion.Euler(
                 Random.Range(-8f, 8f),   
