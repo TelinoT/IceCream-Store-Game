@@ -103,6 +103,8 @@ public class EconomyManager : MonoBehaviour
         xp += xpAmount;
         
         TaskManager.Instance.ReportProgress(TaskGoalType.EarnMoney, coinAmount);
+        
+        if (LevelManager.Instance != null) LevelManager.Instance.CalculateLevel();
 
         SaveEconomy();
 

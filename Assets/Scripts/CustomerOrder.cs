@@ -140,8 +140,10 @@ public class CustomerOrder : MonoBehaviour
             float doubleChance = UpgradeManager.Instance.GetCurrentStatValueByID("double_pay");
             bool isDouble = Random.Range(0f, 100f) < doubleChance;
             if (isDouble) totalCash *= 2;
+            
+            int earnedXP = 5 + Mathf.FloorToInt(patiencePercentage * 10f);
 
-            EconomyManager.Instance.AddReward(totalCash, 10, transform.position);
+            EconomyManager.Instance.AddReward(totalCash, earnedXP, transform.position);
 
             if (desiredRecipe.correctResponseLines.Length > 0)
             {

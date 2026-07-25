@@ -15,6 +15,9 @@ public class DayManager : MonoBehaviour
     
     private int targetCustomersToday;
     private int customersServedToday;
+
+    public GameObject dayImage;
+    public GameObject nightImage;
     
     public bool isDayActive { get; private set; } = false;
     public bool isBetweenDays { get; private set; } = false; 
@@ -154,6 +157,9 @@ public class DayManager : MonoBehaviour
 
         Time.timeScale = 1f;
         FindObjectOfType<CustomerManager>().SpawnFirstCustomer();
+        
+        dayImage.SetActive(true);
+        nightImage.SetActive(false);
     }
 
     public void CustomerServed()
@@ -285,6 +291,11 @@ public class DayManager : MonoBehaviour
         dLight.intensity = 0f;
         nLight.intensity = originalNightIntensity;
         dayLight.SetActive(false);
+        
+        dayImage.SetActive(false);
+        nightImage.SetActive(true);
+        
+        SetTimeToNight();
     }
 
     public void ShowNightHubPanel()
@@ -418,6 +429,9 @@ public class DayManager : MonoBehaviour
         dLight.intensity = originalDayIntensity;
         nLight.intensity = 0f;
         nightLight.SetActive(false);
+        
+        dayImage.SetActive(true);
+        nightImage.SetActive(false);
     }
 
     // --- NEW: Glide Camera Back Coroutine ---
@@ -460,5 +474,10 @@ public class DayManager : MonoBehaviour
     private void LoadDay()
     {
         currentDay = PlayerPrefs.GetInt("CurrentDay", 1);
+    }
+
+    public void SetTimeToNight()
+    {
+        clockText.text = "20:00";
     }
 }

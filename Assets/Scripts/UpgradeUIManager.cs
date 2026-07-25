@@ -39,6 +39,8 @@ public class UpgradeUIManager : MonoBehaviour
     public void OpenUpgradesMenu()
     {
         if (isAnimating) return; // Prevent double-clicking
+        
+        if (PersistentUIController.Instance != null) PersistentUIController.Instance.HideUI();
 
         AudioManager.Instance.Play("ButtonPop");
         upgradesPanel.SetActive(true);
@@ -53,6 +55,8 @@ public class UpgradeUIManager : MonoBehaviour
         if (isAnimating) return; // Prevent double-clicking
 
         AudioManager.Instance.Play("ButtonPop");
+        
+        if (PersistentUIController.Instance != null) PersistentUIController.Instance.ShowUI();
 
         if (currentAnim != null) StopCoroutine(currentAnim);
         currentAnim = StartCoroutine(SlideOut());

@@ -43,6 +43,8 @@ public class TaskUIManager : MonoBehaviour
     public void OpenTasksMenu()
     {
         if (isAnimating) return;
+        
+        if (PersistentUIController.Instance != null) PersistentUIController.Instance.HideUI();
 
         if (AudioManager.Instance != null) AudioManager.Instance.Play("ButtonPop");
         
@@ -56,6 +58,8 @@ public class TaskUIManager : MonoBehaviour
     public void CloseTasksMenu()
     {
         if (isAnimating) return;
+        
+        if (PersistentUIController.Instance != null) PersistentUIController.Instance.ShowUI();
 
         if (AudioManager.Instance != null) AudioManager.Instance.Play("ButtonPop");
 

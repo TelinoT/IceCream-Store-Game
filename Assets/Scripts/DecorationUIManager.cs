@@ -49,6 +49,8 @@ public class DecorationUIManager : MonoBehaviour
 
         Time.timeScale = 0.01f; 
         
+        if (PersistentUIController.Instance != null) PersistentUIController.Instance.HideUI();
+        
         customer = GameObject.Find("Capsule(Clone)");
         if (customer != null) customer.SetActive(false);
         
@@ -65,6 +67,8 @@ public class DecorationUIManager : MonoBehaviour
     public void ExitShopMode()
     {
         if (isAnimating) return;
+        
+        if (PersistentUIController.Instance != null) PersistentUIController.Instance.ShowUI();
 
         if (currentAnim != null) StopCoroutine(currentAnim);
         currentAnim = StartCoroutine(AnimateShopClose());
