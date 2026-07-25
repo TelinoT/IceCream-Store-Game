@@ -9790,11 +9790,11 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 428899479}
   - {fileID: 1971698074}
   - {fileID: 1620771374}
   - {fileID: 921216983}
   - {fileID: 854445704}
-  - {fileID: 428899479}
   - {fileID: 1061786430}
   - {fileID: 352521218}
   - {fileID: 628084574}
@@ -48339,10 +48339,10 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 452490870}
   - {fileID: 381356145}
   - {fileID: 1378584523}
   - {fileID: 1263814164}
-  - {fileID: 452490870}
   - {fileID: 1769110374}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -48804,8 +48804,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DayManager
   upgradeManagerUI: {fileID: 1378584522}
   currentDay: 1
-  baseCustomersPerDay: 0
-  customerVariance: 0
+  baseCustomersPerDay: 8
+  customerVariance: 2
   dayImage: {fileID: 888261318}
   nightImage: {fileID: 795769918}
   openingHour: 9
