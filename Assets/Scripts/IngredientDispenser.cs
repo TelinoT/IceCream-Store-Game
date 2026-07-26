@@ -11,6 +11,26 @@ public class IngredientDispenser : MonoBehaviour
 
     public bool isCookie;
     
+    void Start()
+    {
+        CheckUnlockState();
+    }
+    
+    public void CheckUnlockState()
+    {
+        if (ingredient != null && !string.IsNullOrEmpty(ingredient.unlockID))
+        {
+            if (UpgradeManager.Instance.GetUpgradeLevel(ingredient.unlockID) < 1)
+            {
+                gameObject.SetActive(false);
+            }
+            else
+            {
+                gameObject.SetActive(true);
+            }
+        }
+    }
+    
     public DraggableBase SpawnIngredient()
     {
         Vector3 spawnPos = this.transform.position;

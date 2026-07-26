@@ -1,5 +1,7 @@
 using UnityEngine;
 
+public enum UpgradeCategory { Perk, Flavor, Topping }
+
 [CreateAssetMenu(fileName = "NewUpgrade", menuName = "Shop/UpgradeData")]
 public class UpgradeData : ScriptableObject
 {
@@ -9,6 +11,10 @@ public class UpgradeData : ScriptableObject
     [TextArea] public string description;
     
     public Sprite icon; 
+    
+    public UpgradeCategory category = UpgradeCategory.Perk; 
+    public int requiredLevel = 1; 
+    public bool isOneTimeUnlock = false; 
 
     [Header("Leveling & Costs")]
     public int maxLevel = 5;

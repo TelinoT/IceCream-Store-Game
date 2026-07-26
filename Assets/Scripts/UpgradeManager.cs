@@ -33,7 +33,6 @@ public class UpgradeManager : MonoBehaviour
         UpgradeData data = allUpgrades.Find(u => u.upgradeID == upgradeID);
         if (data != null)
         {
-            // CHANGED: We use "data.upgradeID" instead of "upgrade.upgradeID"
             int currentLevel = GetUpgradeLevel(data.upgradeID); 
             return data.baseStatValue + (data.statIncreasePerLevel * currentLevel);
         }
@@ -55,6 +54,13 @@ public class UpgradeManager : MonoBehaviour
             PlayerPrefs.Save();
             AudioManager.Instance.Play("BuyButton");
             TaskManager.Instance.ReportProgress(TaskGoalType.BuyUpgrades, 1);
+            
+            IngredientDispenser[] allDispensers = FindObjectsOfType<IngredientDispenser>(true);
+            foreach (IngredientDispenser dispenser in allDispensers)
+            {
+                dispenser.CheckUnlockState();
+            }
+            
             return true;
         }
 

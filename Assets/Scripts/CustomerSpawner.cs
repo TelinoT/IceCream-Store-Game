@@ -56,6 +56,14 @@ public class CustomerSpawner : MonoBehaviour
         IceCreamRecipe newRecipe = ScriptableObject.CreateInstance<IceCreamRecipe>();
         newRecipe.flavors = new List<IceCreamIngredient>();
         newRecipe.toppings = new List<IceCreamIngredient>();
+        
+        List<IceCreamIngredient> unlockedFlavors = availableFlavors.FindAll(f => 
+            string.IsNullOrEmpty(f.unlockID) || UpgradeManager.Instance.GetUpgradeLevel(f.unlockID) >= 1);
+            
+        List<IceCreamIngredient> unlockedToppings = availableToppings.FindAll(t => 
+            string.IsNullOrEmpty(t.unlockID) || UpgradeManager.Instance.GetUpgradeLevel(t.unlockID) >= 1);
+
+        if (unlockedFlavors.Count == 0) unlockedFlavors = availableFlavors;
 
         IceCreamIngredient chosenBase = availableBases[Random.Range(0, availableBases.Count)];
         newRecipe.baseCone = chosenBase;
@@ -91,17 +99,17 @@ public class CustomerSpawner : MonoBehaviour
 
         for (int i = 0; i < scoopCount; i++)
         {
-            IceCreamIngredient chosenFlavor = availableFlavors[Random.Range(0, availableFlavors.Count)];
+            IceCreamIngredient chosenFlavor = unlockedFlavors[Random.Range(0, unlockedFlavors.Count)];
             newRecipe.flavors.Add(chosenFlavor);
             totalPrice += chosenFlavor.price;
             flavorNames.Add(chosenFlavor.ingredientName);
         }
 
         IceCreamIngredient chosenTopping = null;
-        bool wantsTopping = Random.value > 0.5f && availableToppings.Count > 0;
+        bool wantsTopping = Random.value > 0.65f && unlockedToppings.Count > 0;
         if (wantsTopping)
         {
-            chosenTopping = availableToppings[Random.Range(0, availableToppings.Count)];
+            chosenTopping = unlockedToppings[Random.Range(0, unlockedToppings.Count)];
             newRecipe.toppings.Add(chosenTopping);
             totalPrice += chosenTopping.price;
         }

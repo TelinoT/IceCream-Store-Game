@@ -16,4 +16,6 @@ public class IceCreamIngredient : ScriptableObject
     // --- NEW: Dynamic Pricing ---
     [Tooltip("How much this specific ingredient adds to the total order price.")]
     public int price; 
+    
+    public string unlockID;
 }
