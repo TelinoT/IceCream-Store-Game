@@ -64,6 +64,8 @@ public class Buttons : MonoBehaviour
             
             // Move stack back to the prep station
             if (IceCreamStack.Instance != null) IceCreamStack.Instance.MoveToCounter(false);
+            
+            PersistentUIController.Instance.HideUI();
         }
         else
         {
@@ -75,6 +77,8 @@ public class Buttons : MonoBehaviour
             
             // Move stack to the front customer counter
             if (IceCreamStack.Instance != null) IceCreamStack.Instance.MoveToCounter(true);
+            
+            PersistentUIController.Instance.ShowUI();
         }
     }
     
