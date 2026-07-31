@@ -256,6 +256,12 @@ public class DayManager : MonoBehaviour
         AudioManager.Instance.Play("ButtonPop");
         
         if (summaryPanel != null) summaryPanel.SetActive(false);
+        
+        GameObject[] leftoverTexts = GameObject.FindGameObjectsWithTag("FloatingText");
+        foreach (GameObject textObj in leftoverTexts)
+        {
+            Destroy(textObj);
+        }
 
         StartCoroutine(FadeLightingToNight());
         StartCoroutine(GlideCameraToNight());

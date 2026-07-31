@@ -281,4 +281,9 @@ public class DraggableBase : MonoBehaviour
         JellyBounce jelly = GetComponent<JellyBounce>();
         if (jelly != null) jelly.PlayBounce();
     }
+    public void SetCarveProgress(float percentage)
+    {
+        // Smoothly scale from 0 to its true original scale based on drag distance
+        transform.localScale = Vector3.Lerp(Vector3.zero, originalScale, percentage);
+    }
 }

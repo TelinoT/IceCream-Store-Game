@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class MobileInputManager : MonoBehaviour
 {
-    // --- NEW: Added Singleton ---
     public static MobileInputManager Instance;
 
     [Header("References")]
@@ -14,11 +13,22 @@ public class MobileInputManager : MonoBehaviour
     public float edgeScrollSpeed = 10f;
     public float edgeBoundary = 100f;
 
+    [Header("Carving Settings (Flavors Only)")]
+    public float carveThreshold = 150f; 
+    
+    [Tooltip("How thick the 'fat finger' raycast is in 3D space. 0.5 is a good starting point.")]
+    public float colliderForgivenessRadius = 0.5f;
+
     private DraggableBase currentItem;
     private bool isDraggingItem = false;
+    private bool isCarving = false; 
     private Vector2 lastTouchPos;
+    
+    private float currentCarveDistance = 0f;  
+    
+    // --- RESTORED: We remember the exact 3D collider we are carving ---
+    private Collider activeDispenserCollider; 
 
-    // --- NEW: Set up the Singleton ---
     void Awake()
     {
         Instance = this;
@@ -51,6 +61,7 @@ public class MobileInputManager : MonoBehaviour
         Ray ray = mainCam.ScreenPointToRay(screenPos);
         RaycastHit hit;
 
+        // The initial click can still be a precise, thin raycast
         if (Physics.Raycast(ray, out hit, 100f, dispenserLayer))
         {
             IngredientDispenser dispenser = hit.collider.GetComponent<IngredientDispenser>();
@@ -61,19 +72,71 @@ public class MobileInputManager : MonoBehaviour
                 
                 if ((needsBase && isBase) || (!needsBase && !isBase))
                 {
-                    StartDraggingItem(dispenser);
+                    if (dispenser.ingredient.type == IngredientType.Flavor)
+                    {
+                        StartCarvingItem(dispenser, screenPos);
+                    }
+                    else
+                    {
+                        StartDraggingItem(dispenser, screenPos);
+                    }
                     return; 
                 }
             }
         }
 
         isDraggingItem = false;
+        isCarving = false;
         lastTouchPos = screenPos;
     }
 
     void HandleTouchMove(Vector2 screenPos)
     {
-        if (isDraggingItem && currentItem != null)
+        if (isCarving && currentItem != null)
+        {
+            Ray ray = mainCam.ScreenPointToRay(screenPos);
+            bool isStillOverDispenser = false;
+            
+            // --- NEW: The "Fat Finger" SphereCastAll ---
+            // This fires a thick cylinder from the camera. We use 'All' so that if it hits 
+            // a neighboring tub first, it still checks if our active tub is inside the cylinder.
+            RaycastHit[] hits = Physics.SphereCastAll(ray, colliderForgivenessRadius, 100f, dispenserLayer);
+            
+            foreach (RaycastHit hit in hits)
+            {
+                if (hit.collider == activeDispenserCollider)
+                {
+                    isStillOverDispenser = true;
+                    break;
+                }
+            }
+
+            // If the thick cylinder completely misses the target collider, cancel the carve!
+            if (!isStillOverDispenser)
+            {
+                CancelDrag();
+                return;
+            }
+
+            currentCarveDistance += Vector2.Distance(lastTouchPos, screenPos);
+            float progress = Mathf.Clamp01(currentCarveDistance / carveThreshold);
+
+            currentItem.SetCarveProgress(progress);
+            currentItem.MoveTo(screenPos); 
+
+            if (progress >= 1f)
+            {
+                isCarving = false;
+                isDraggingItem = true;
+                activeDispenserCollider = null; 
+                
+                AudioManager.Instance.Play("ButtonPop"); 
+                
+                JellyBounce jelly = currentItem.GetComponent<JellyBounce>();
+                if (jelly != null) jelly.PlayBounce();
+            }
+        }
+        else if (isDraggingItem && currentItem != null)
         {
             currentItem.MoveTo(screenPos);
             HandleEdgeScrolling(screenPos);
@@ -83,28 +146,56 @@ public class MobileInputManager : MonoBehaviour
             float deltaX = screenPos.x - lastTouchPos.x;
             if (cameraMover != null)
                 cameraMover.ManualMove(deltaX);
-
-            lastTouchPos = screenPos;
         }
+        
+        lastTouchPos = screenPos;
     }
 
     void HandleTouchEnd()
     {
-        if (isDraggingItem && currentItem != null)
+        if ((isCarving || isDraggingItem) && currentItem != null)
         {
             currentItem.TryPlace();
         }
+        
         isDraggingItem = false;
+        isCarving = false;
+        activeDispenserCollider = null;
         currentItem = null;
     }
 
-    void StartDraggingItem(IngredientDispenser dispenser)
+    void StartCarvingItem(IngredientDispenser dispenser, Vector2 screenPos)
+    {
+        currentItem = dispenser.SpawnIngredient();
+        if (currentItem != null)
+        {
+            isCarving = true;
+            isDraggingItem = false;
+            
+            currentCarveDistance = 0f; 
+            
+            // --- RESTORED: Save the actual 3D collider ---
+            activeDispenserCollider = dispenser.GetComponent<Collider>(); 
+
+            currentItem.SetCarveProgress(0f);
+            currentItem.MoveTo(screenPos);
+            
+            lastTouchPos = screenPos; 
+        }
+    }
+
+    void StartDraggingItem(IngredientDispenser dispenser, Vector2 screenPos)
     {
         currentItem = dispenser.SpawnIngredient();
         if (currentItem != null)
         {
             isDraggingItem = true;
-            currentItem.MoveTo(Input.mousePosition);
+            isCarving = false;
+            
+            currentItem.SetCarveProgress(1f); 
+            currentItem.MoveTo(screenPos);
+            
+            lastTouchPos = screenPos;
         }
     }
 
@@ -127,15 +218,16 @@ public class MobileInputManager : MonoBehaviour
         }
     }
 
-    // --- NEW: Method to forcefully stop dragging ---
     public void CancelDrag()
     {
-        if (isDraggingItem && currentItem != null)
+        if ((isDraggingItem || isCarving) && currentItem != null)
         {
-            // Destroy the ingredient floating on their finger
-            Destroy(currentItem.gameObject); 
+            currentItem.TryPlace(); 
+            
             currentItem = null;
             isDraggingItem = false;
+            isCarving = false;
+            activeDispenserCollider = null;
         }
     }
 }

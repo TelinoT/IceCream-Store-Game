@@ -16,8 +16,11 @@ MonoBehaviour:
   displayName: Zen Atmosphere
   description: Customers wait longer
   icon: {fileID: 21300000, guid: af050364b416f460baa9a72d1a6bfd5e, type: 3}
+  category: 0
+  requiredLevel: 1
+  isOneTimeUnlock: 0
   maxLevel: 5
   baseCost: 25
-  costMultiplier: 1.6
+  costMultiplier: 1.5
   baseStatValue: 0
-  statIncreasePerLevel: 1.5
+  statIncreasePerLevel: 5
