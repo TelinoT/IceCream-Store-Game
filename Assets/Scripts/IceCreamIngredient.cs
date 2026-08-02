@@ -2,6 +2,8 @@ using UnityEngine;
 
 public enum IngredientType { Base, Flavor, Topping }
 
+public enum ToppingInteraction { InstantDrop, Shaker, TracePath }
+
 [CreateAssetMenu(fileName = "NewIngredient", menuName = "IceCream/Ingredient")]
 public class IceCreamIngredient : ScriptableObject
 {
@@ -18,4 +20,6 @@ public class IceCreamIngredient : ScriptableObject
     public int price; 
     
     public string unlockID;
+    
+    public ToppingInteraction interactionType = ToppingInteraction.InstantDrop;
 }

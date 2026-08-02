@@ -58,6 +58,13 @@ public class MobileInputManager : MonoBehaviour
 
     void HandleTouchStart(Vector2 screenPos)
     {
+        // --- MISSING FIX 1 APPLIED: Tap to shake ---
+        if (currentItem != null && currentItem.isShakingMode)
+        {
+            currentItem.PerformShake();
+            return;
+        }
+
         Ray ray = mainCam.ScreenPointToRay(screenPos);
         RaycastHit hit;
 
@@ -92,6 +99,8 @@ public class MobileInputManager : MonoBehaviour
 
     void HandleTouchMove(Vector2 screenPos)
     {
+        if (currentItem != null && currentItem.isShakingMode) return;
+        
         if (isCarving && currentItem != null)
         {
             Ray ray = mainCam.ScreenPointToRay(screenPos);
@@ -153,9 +162,19 @@ public class MobileInputManager : MonoBehaviour
 
     void HandleTouchEnd()
     {
+        if (currentItem != null && currentItem.isShakingMode) return;
+        
         if ((isCarving || isDraggingItem) && currentItem != null)
         {
             currentItem.TryPlace();
+        }
+        
+        // --- MISSING FIX 2 APPLIED: Don't forget the item if it entered shaking mode! ---
+        if (currentItem != null && currentItem.isShakingMode)
+        {
+            isDraggingItem = false;
+            isCarving = false;
+            return; 
         }
         
         isDraggingItem = false;

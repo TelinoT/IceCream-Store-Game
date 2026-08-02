@@ -10,7 +10,7 @@ public class RandomSpawner : MonoBehaviour
     public int numberToSpawn = 8;
     public Transform[] spawnPoints;
 
-    void Start()
+    void OnEnable()
     {
         if (spawnPoints.Length != 4)
         {

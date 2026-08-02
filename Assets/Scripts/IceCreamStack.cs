@@ -149,7 +149,7 @@ public class IceCreamStack : MonoBehaviour
         if (Buttons.Instance != null) Buttons.Instance.UpdateServeUI();
     }
 
-    public void AddSprinkles()
+    public void RevealSprinkles(float progress)
     {
         for (int i = 0; i < addedObjects.Count; i++)
         {
@@ -159,7 +159,13 @@ public class IceCreamStack : MonoBehaviour
             if (element.transform.childCount > 0)
             {
                 Transform firstChild = element.transform.GetChild(0);
-                firstChild.gameObject.SetActive(true);
+                firstChild.gameObject.SetActive(true); // Ensure the parent is on
+
+                SprinkleGroup group = firstChild.GetComponent<SprinkleGroup>();
+                if (group != null)
+                {
+                    group.RevealRandom(progress);
+                }
             }
         }
     }

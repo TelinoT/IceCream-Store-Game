@@ -1,8 +1,17 @@
 using System;
 using UnityEngine;
+using System.Collections;
+using Random = UnityEngine.Random;
 
 public class DraggableBase : MonoBehaviour
 {
+    public bool isShakingMode = false;
+    private int shakeCount = 0;
+    private int requiredShakes = 3;
+    
+    private Coroutine shakeCoroutine;
+    private bool isFinishing = false;
+    
     private IceCreamIngredient ingredient;
     private bool placed = false;
 
@@ -209,7 +218,22 @@ public class DraggableBase : MonoBehaviour
                 float distance = Vector3.Distance(transform.position, plateTransform.position);
                 if (distance < 0.5f)
                 {
-                    PlaceToppings();
+                    // --- CHANGED: Route the logic based on the specific topping's needs! ---
+                    switch (ingredient.interactionType)
+                    {
+                        case ToppingInteraction.Shaker:
+                            EnterShakerMode();
+                            break;
+                    
+                        case ToppingInteraction.InstantDrop:
+                            PlaceToppings(); // Your original method!
+                            break;
+
+                        case ToppingInteraction.TracePath:
+                            // We will add the syrup logic here later!
+                            break;
+                    }
+                
                     return;
                 }
             }
@@ -237,17 +261,19 @@ public class DraggableBase : MonoBehaviour
 
     private void PlaceToppings()
     {
-        Debug.Log("Adding Sprinkles: DraggableBase");
         placed = true;
+
+        if (IceCreamStack.Instance != null)
+        {
+            IceCreamStack.Instance.RevealSprinkles(1f);
+        }
+
+        transform.SetParent(stack.visualParent);
+        transform.localScale = originalScale;
+
         stack.AddIngredient(ingredient, this.gameObject);
         
-        IceCreamStack.Instance.AddSprinkles();
-        
-        AudioManager.Instance.Play("SprinklesDrop");
-        
-        TaskManager.Instance.ReportProgress(TaskGoalType.AddSprinkles, 1);
-        
-        Destroy(gameObject);
+        //AudioManager.Instance.Play("BaseDrop");
     }
 
     private void PlaceOnPlate()
@@ -285,5 +311,96 @@ public class DraggableBase : MonoBehaviour
     {
         // Smoothly scale from 0 to its true original scale based on drag distance
         transform.localScale = Vector3.Lerp(Vector3.zero, originalScale, percentage);
+    }
+    
+    private void EnterShakerMode()
+    {
+        isShakingMode = true;
+        CameraSwipeMover.Instance.currentInput = 1; // Release the camera lock
+        
+        // 1. Calculate how tall the current ice cream stack is 
+        // (Assuming each flavor scoop adds roughly 0.45f in height)
+        float currentIceCreamHeight = 0f;
+        if (stack != null)
+        {
+            // We multiply the number of scoops by an estimated scoop height
+            currentIceCreamHeight = stack.GetFlavorCount() * 0.025f;
+        }
+        
+        Vector3 screenRight = Camera.main.transform.right;
+        screenRight.y = 0f; // Keep it perfectly flat so it doesn't mess with our height
+        screenRight.Normalize();
+
+        // 2. Float just slightly (0.4f) above the top of the ice cream stack
+        transform.position = plateTransform.position + Vector3.up * (currentIceCreamHeight + 0.5f) + (screenRight * 0.05f);
+        
+        transform.localRotation = Quaternion.Euler(-55f, 0f, 0f);
+        
+        // Tell the stack it has toppings, but don't delete the jar yet
+        stack.AddIngredient(ingredient, this.gameObject); 
+    }
+
+    public void PerformShake()
+    {
+        // Don't allow more taps if it's currently doing its final exit animation
+        if (isFinishing) return;
+
+        shakeCount++;
+        float progress = (float)shakeCount / requiredShakes;
+
+        IceCreamStack.Instance.RevealSprinkles(progress);
+        AudioManager.Instance.Play("SprinklesTake"); 
+
+        // --- CHANGED: Trigger the smooth shake animation ---
+        if (shakeCoroutine != null) StopCoroutine(shakeCoroutine);
+        shakeCoroutine = StartCoroutine(SmoothShakeRoutine());
+
+        if (shakeCount >= requiredShakes)
+        {
+            isFinishing = true;
+            // Delay the destruction by 0.2 seconds so the final shake animation actually finishes!
+            Invoke("FinishTopping", 0.2f); 
+        }
+    }
+    
+    private IEnumerator SmoothShakeRoutine()
+    {
+        float duration = 0.15f; 
+        float elapsed = 0f;
+        
+        // The resting tilt
+        Quaternion baseRot = Quaternion.Euler(-55f, 0f, 0f);
+        // The downward flick of the wrist
+        Quaternion shakeRot = Quaternion.Euler(-95f, 0f, 0f); 
+
+        // 1. Flick downwards
+        while (elapsed < duration / 2f)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / (duration / 2f);
+            transform.localRotation = Quaternion.Lerp(baseRot, shakeRot, t);
+            yield return null;
+        }
+        
+        // 2. Snap smoothly back to resting position
+        elapsed = 0f;
+        while (elapsed < duration / 2f)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / (duration / 2f);
+            transform.localRotation = Quaternion.Lerp(shakeRot, baseRot, t);
+            yield return null;
+        }
+
+        // Lock it perfectly back to 35 degrees
+        transform.localRotation = baseRot;
+    }
+
+    private void FinishTopping()
+    {
+        placed = true;
+        AudioManager.Instance.Play("SprinklesDrop");
+        TaskManager.Instance.ReportProgress(TaskGoalType.AddSprinkles, 1);
+        Destroy(gameObject);
     }
 }

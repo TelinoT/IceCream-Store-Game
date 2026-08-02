@@ -19,3 +19,4 @@ MonoBehaviour:
   stackHeight: 0.05
   price: 1
   unlockID: unlock_sprinkles
+  interactionType: 1

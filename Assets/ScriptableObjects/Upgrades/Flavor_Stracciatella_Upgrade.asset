@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e9fec94392914f9cb74df5c81175953, type: 3}
+  m_Name: Flavor_Stracciatella_Upgrade
+  m_EditorClassIdentifier: 
+  upgradeID: unlock_flavor_stracciatella
+  displayName: Stracciatella
+  description: 'One of the best combinations there is.
+
+    (+4$)'
+  icon: {fileID: 21300000, guid: b27b3ed662cb3464d8faf579b15f68a1, type: 3}
+  category: 1
+  requiredLevel: 4
+  isOneTimeUnlock: 1
+  maxLevel: 1
+  baseCost: 150
+  costMultiplier: 1
+  baseStatValue: 0
+  statIncreasePerLevel: 0

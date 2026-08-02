@@ -12,10 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e9fec94392914f9cb74df5c81175953, type: 3}
   m_Name: MoreTips
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeID: max_tipUp
+  upgradeID: max_tip_up
   displayName: Charming
   description: Customers give more tips
   icon: {fileID: 21300000, guid: ebebdb43ecbec4c7aaf1c9e446f35d66, type: 3}
+  category: 0
+  requiredLevel: 1
+  isOneTimeUnlock: 0
   maxLevel: 3
   baseCost: 30
   costMultiplier: 1.8

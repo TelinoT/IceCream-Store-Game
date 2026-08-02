@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9a85ce448ba047f4bb931663c0714ec, type: 3}
-  m_Name: Flavor_Strawberry
+  m_Name: Flavor_Stracciatella
   m_EditorClassIdentifier: 
-  ingredientName: Strawberry
+  ingredientName: Stracciatella
   type: 1
-  prefab: {fileID: 6115162088215403876, guid: b4e1fab1c0fd74f1799b97f32682e870, type: 3}
+  prefab: {fileID: 6115162088215403876, guid: 2c952e4c5f9524f8eb394dbc63c76829, type: 3}
   icon: {fileID: 0}
   stackHeight: 0.05
-  price: 3
-  unlockID: unlock_flavor_strawberry
+  price: 4
+  unlockID: unlock_flavor_stracciatella
   interactionType: 0
