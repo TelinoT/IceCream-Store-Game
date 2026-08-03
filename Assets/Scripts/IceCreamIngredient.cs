@@ -21,5 +21,7 @@ public class IceCreamIngredient : ScriptableObject
     
     public string unlockID;
     
+    public string dialoguePrefix = "some";
+    
     public ToppingInteraction interactionType = ToppingInteraction.InstantDrop;
 }

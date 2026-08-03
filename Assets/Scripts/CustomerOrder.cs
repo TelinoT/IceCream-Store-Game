@@ -25,6 +25,8 @@ public class CustomerOrder : MonoBehaviour
     
     private bool isTimerActive = false;
     
+    [HideInInspector] public bool isTimerPaused = false;
+    
     void Start()
     {
         float patienceBonus = UpgradeManager.Instance.GetCurrentStatValueByID("max_patience");
@@ -65,9 +67,8 @@ public class CustomerOrder : MonoBehaviour
 
     void Update()
     {
-        // --- UPDATED: Don't do any math if the timer hasn't started yet! ---
-        if (orderHandled || !isTimerActive) return;
-
+        if (orderHandled || !isTimerActive || isTimerPaused) return;
+        
         currentPatience -= Time.deltaTime;
 
         if (PatienceUIManager.Instance != null)

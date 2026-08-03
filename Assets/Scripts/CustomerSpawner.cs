@@ -24,10 +24,14 @@ public class CustomerSpawner : MonoBehaviour
         "{1} in a {0}, please."
     };
 
-    public string[] toppingTemplates = new string[] {
-        " Oh, and add {2} on top!",
-        " With some {2} please.",
-        " And throw some {2} on there."
+    public string[] toppingConnectors = new string[] {
+        " And could you top that off with ",
+        " Oh, and add ",
+        " With ",
+        " And throw on ",
+        " Plus ",
+        " And finish it with ",
+        " Oh, and I also want "
     };
     
     [Range(0f, 1f)] public float chanceOneScoop = 0.6f;
@@ -65,38 +69,22 @@ public class CustomerSpawner : MonoBehaviour
 
         if (unlockedFlavors.Count == 0) unlockedFlavors = availableFlavors;
 
+        // --- BASE & FLAVORS ---
         IceCreamIngredient chosenBase = availableBases[Random.Range(0, availableBases.Count)];
         newRecipe.baseCone = chosenBase;
         int totalPrice = chosenBase.price;
 
-        int scoopCount = 1;
-
-        if (forceScoopCount > 0)
+        int scoopCount = forceScoopCount > 0 ? forceScoopCount : 1;
+        if (forceScoopCount == 0)
         {
-            scoopCount = forceScoopCount; // Use the debug override
+            float roll = Random.value;
+            if (roll <= chanceOneScoop) scoopCount = 1;
+            else if (roll <= chanceOneScoop + chanceTwoScoops) scoopCount = 2;
+            else scoopCount = 3;
         }
-        else
-        {
-            float roll = Random.value; // Rolls a random number between 0.0 and 1.0
-
-            if (roll <= chanceOneScoop)
-            {
-                scoopCount = 1;
-            }
-            else if (roll <= chanceOneScoop + chanceTwoScoops)
-            {
-                scoopCount = 2;
-            }
-            else
-            {
-                scoopCount = 3;
-            }
-        }
-        
         scoopCount = Mathf.Clamp(scoopCount, 1, 3);
         
         List<string> flavorNames = new List<string>();
-
         for (int i = 0; i < scoopCount; i++)
         {
             IceCreamIngredient chosenFlavor = unlockedFlavors[Random.Range(0, unlockedFlavors.Count)];
@@ -105,13 +93,35 @@ public class CustomerSpawner : MonoBehaviour
             flavorNames.Add(chosenFlavor.ingredientName);
         }
 
-        IceCreamIngredient chosenTopping = null;
-        bool wantsTopping = Random.value > 0.65f && unlockedToppings.Count > 0;
-        if (wantsTopping)
+        // --- NEW: WEIGHTED TOPPING MATH ---
+        int toppingCount = 0;
+        float topRoll = Random.value;
+        
+        if (unlockedToppings.Count > 0)
         {
-            chosenTopping = unlockedToppings[Random.Range(0, unlockedToppings.Count)];
-            newRecipe.toppings.Add(chosenTopping);
-            totalPrice += chosenTopping.price;
+            if (topRoll <= 0.35f) toppingCount = 0;      // 35% chance for 0
+            else if (topRoll <= 0.75f) toppingCount = 1; // 40% chance for 1
+            else if (topRoll <= 0.95f) toppingCount = 2; // 20% chance for 2
+            else toppingCount = 3;                       // 5% chance for 3
+        }
+        
+        // Cap it to how many unique toppings we actually have unlocked
+        toppingCount = Mathf.Min(toppingCount, unlockedToppings.Count);
+
+        // Shuffle the unlocked toppings so we don't pick the same one twice
+        for (int i = 0; i < unlockedToppings.Count; i++)
+        {
+            IceCreamIngredient temp = unlockedToppings[i];
+            int randomIndex = Random.Range(i, unlockedToppings.Count);
+            unlockedToppings[i] = unlockedToppings[randomIndex];
+            unlockedToppings[randomIndex] = temp;
+        }
+
+        // Add them to the recipe
+        for (int i = 0; i < toppingCount; i++)
+        {
+            newRecipe.toppings.Add(unlockedToppings[i]);
+            totalPrice += unlockedToppings[i].price;
         }
         
         newRecipe.price = totalPrice;
@@ -122,22 +132,32 @@ public class CustomerSpawner : MonoBehaviour
         else if (scoopCount == 3) flavorText = $"{flavorNames[0]}, {flavorNames[1]}, and {flavorNames[2]}";
 
         string dialogue = baseAndFlavorTemplates[Random.Range(0, baseAndFlavorTemplates.Length)];
-        
-        if (wantsTopping)
+        dialogue = string.Format(dialogue, chosenBase.ingredientName, flavorText, "");
+
+        if (toppingCount > 0)
         {
-            dialogue += toppingTemplates[Random.Range(0, toppingTemplates.Length)];
-            dialogue = string.Format(dialogue, chosenBase.ingredientName, flavorText, chosenTopping.ingredientName);
-            // {0} = Base, {1} = Flavors, {2} = Topping
-        }
-        else
-        {
-            // {0} = Base, {1} = Flavors, {2} is ignored
-            dialogue = string.Format(dialogue, chosenBase.ingredientName, flavorText, "");
+            string connector = toppingConnectors[Random.Range(0, toppingConnectors.Length)];
+            string toppingDialogue = connector;
+            
+            if (toppingCount == 1)
+            {
+                toppingDialogue += $"{newRecipe.toppings[0].dialoguePrefix} {newRecipe.toppings[0].ingredientName}?";
+            }
+            else if (toppingCount == 2)
+            {
+                toppingDialogue += $"{newRecipe.toppings[0].dialoguePrefix} {newRecipe.toppings[0].ingredientName} and {newRecipe.toppings[1].dialoguePrefix} {newRecipe.toppings[1].ingredientName}?";
+            }
+            else if (toppingCount >= 3)
+            {
+                toppingDialogue += $"{newRecipe.toppings[0].dialoguePrefix} {newRecipe.toppings[0].ingredientName}, {newRecipe.toppings[1].dialoguePrefix} {newRecipe.toppings[1].ingredientName}, and {newRecipe.toppings[2].dialoguePrefix} {newRecipe.toppings[2].ingredientName}?";
+            }
+            
+            dialogue += toppingDialogue;
         }
 
         newRecipe.orderLines = new string[] { dialogue };
-        newRecipe.correctResponseLines = new string[] { "Yum! Thanks!", "Perfect!", "Looks delicious!", "Perfect! Just what I wanted!", "Yay! That looks delicious!", "Mmm… thank you so much!" };
-        newRecipe.wrongResponseLines = new string[] { "Uh... this isn't what I ordered.", "I think you messed up.", "Oops… that’s not what I ordered.", "Close, but not quite." };
+        newRecipe.correctResponseLines = new string[] { "Yum! Thanks!", "Perfect!", "Looks delicious!" };
+        newRecipe.wrongResponseLines = new string[] { "Uh... this isn't what I ordered.", "I think you messed up." };
 
         return newRecipe;
     }

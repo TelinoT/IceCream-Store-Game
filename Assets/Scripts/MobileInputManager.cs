@@ -169,12 +169,18 @@ public class MobileInputManager : MonoBehaviour
             currentItem.TryPlace();
         }
         
-        // --- MISSING FIX 2 APPLIED: Don't forget the item if it entered shaking mode! ---
         if (currentItem != null && currentItem.isShakingMode)
         {
             isDraggingItem = false;
             isCarving = false;
             return; 
+        }
+
+        // --- FIX: Turn the dispenser visuals back on when you let go ---
+        if (activeDispenserCollider != null)
+        {
+            IngredientDispenser activeDisp = activeDispenserCollider.GetComponent<IngredientDispenser>();
+            if (activeDisp != null) activeDisp.SetVisuals(true);
         }
         
         isDraggingItem = false;
@@ -211,6 +217,10 @@ public class MobileInputManager : MonoBehaviour
             isDraggingItem = true;
             isCarving = false;
             
+            // --- FIX: Remember the collider and hide the dispenser immediately ---
+            activeDispenserCollider = dispenser.GetComponent<Collider>();
+            dispenser.SetVisuals(false); 
+
             currentItem.SetCarveProgress(1f); 
             currentItem.MoveTo(screenPos);
             
@@ -243,6 +253,13 @@ public class MobileInputManager : MonoBehaviour
         {
             currentItem.TryPlace(); 
             
+            // --- FIX: Turn the dispenser visuals back on if the drag is canceled ---
+            if (activeDispenserCollider != null)
+            {
+                IngredientDispenser activeDisp = activeDispenserCollider.GetComponent<IngredientDispenser>();
+                if (activeDisp != null) activeDisp.SetVisuals(true);
+            }
+
             currentItem = null;
             isDraggingItem = false;
             isCarving = false;

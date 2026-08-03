@@ -5,6 +5,10 @@ using Random = UnityEngine.Random;
 
 public class DraggableBase : MonoBehaviour
 {
+    [Header("Carving Settings")]
+    private float carveHeight = 1.2f; // Tweak this so it sits perfectly above your tubs
+    private float activeYOffset;
+    
     public bool isShakingMode = false;
     private int shakeCount = 0;
     private int requiredShakes = 3;
@@ -78,19 +82,37 @@ public class DraggableBase : MonoBehaviour
             }
         }
         
+        activeYOffset = yOffset;
+        
         //transform.localScale = Vector3.one * 1.2f;
     }
     
+    public void SetCarveProgress(float percentage)
+    {
+        // Smoothly scale from 0 to its true original scale based on drag distance
+        transform.localScale = Vector3.Lerp(Vector3.zero, originalScale, percentage);
+        
+        // --- NEW: Height Logic ---
+        if (percentage >= 1f)
+        {
+            // Carving is done, drop to the correct stack height for the plate
+            activeYOffset = yOffset;
+        }
+        else
+        {
+            // Still carving, stay elevated safely above the tubs
+            activeYOffset = carveHeight;
+        }
+    }
+
     public void MoveTo(Vector2 screenPosition)
     {
         if (placed) return;
 
         Ray ray = Camera.main.ScreenPointToRay(screenPosition);
         
-        // --- FIX IS HERE ---
-        // Instead of the floor (0), we create a plane at the EXACT height the object will be (yOffset).
-        // This solves the parallax issue with angled cameras.
-        Plane dragPlane = new Plane(Vector3.up, new Vector3(0, yOffset, 0));
+        // --- CHANGED: We now use the dynamic activeYOffset instead of the static yOffset ---
+        Plane dragPlane = new Plane(Vector3.up, new Vector3(0, activeYOffset, 0));
 
         if (dragPlane.Raycast(ray, out float enter))
         {
@@ -101,9 +123,8 @@ public class DraggableBase : MonoBehaviour
             if (targetPos.x < -3f) targetPos.x = -3f;
 
             // 2. Apply Coordinates
-            // We keep your +0.5f offset because you asked to restore it.
             float finalX = targetPos.x; 
-            float finalY = yOffset; // The height is already correct from the plane
+            float finalY = activeYOffset; // --- CHANGED ---
             float finalZ = targetPos.z;
 
             // 3. Update Position
@@ -224,13 +245,13 @@ public class DraggableBase : MonoBehaviour
                         case ToppingInteraction.Shaker:
                             EnterShakerMode();
                             break;
-                    
+    
                         case ToppingInteraction.InstantDrop:
-                            PlaceToppings(); // Your original method!
+                            PlaceToppings(); 
                             break;
 
                         case ToppingInteraction.TracePath:
-                            // We will add the syrup logic here later!
+                            SyrupManager.Instance.EnterSyrupMode(this.gameObject, ingredient);
                             break;
                     }
                 
@@ -306,11 +327,6 @@ public class DraggableBase : MonoBehaviour
         
         JellyBounce jelly = GetComponent<JellyBounce>();
         if (jelly != null) jelly.PlayBounce();
-    }
-    public void SetCarveProgress(float percentage)
-    {
-        // Smoothly scale from 0 to its true original scale based on drag distance
-        transform.localScale = Vector3.Lerp(Vector3.zero, originalScale, percentage);
     }
     
     private void EnterShakerMode()

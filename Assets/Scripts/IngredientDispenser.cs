@@ -11,6 +11,17 @@ public class IngredientDispenser : MonoBehaviour
 
     public bool isCookie;
     
+    public bool hideWhileDragging = false; 
+    public GameObject visualModel; // Drag the 3D model part of your dispenser here
+
+    public void SetVisuals(bool state)
+    {
+        if (hideWhileDragging && visualModel != null)
+        {
+            visualModel.SetActive(state);
+        }
+    }
+    
     void Start()
     {
         CheckUnlockState();

@@ -431,7 +431,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   desiredRecipe: {fileID: 0}
   speechText: {fileID: 8057947050079722155}
-  maxPatience: 17
+  maxPatience: 19
   maxTip: 2
   patienceColorGradient:
     serializedVersion: 2
