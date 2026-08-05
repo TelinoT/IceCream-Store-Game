@@ -7,6 +7,18 @@ public class DayManager : MonoBehaviour
     public static DayManager Instance;
     
     public UpgradeUIManager upgradeManagerUI;
+    
+    public float transitionDuration = 2.5f;
+    
+    [Header("Ambient Lighting: Day")]
+    public Color daySkyColor = new Color32(114, 145, 209, 255); 
+    public Color dayEquatorColor = new Color32(243, 206, 187, 255);
+    public Color dayGroundColor = new Color32(91, 84, 68, 255);
+    
+    [Header("Ambient Lighting: Night")]
+    public Color nightSkyColor = new Color32(43, 45, 92, 255); 
+    public Color nightEquatorColor = new Color32(96, 59, 100, 255); 
+    public Color nightGroundColor = new Color32(30, 31, 54, 255);
 
     [Header("Day Settings")]
     public int currentDay = 1;
@@ -278,6 +290,8 @@ public class DayManager : MonoBehaviour
         dayLight.SetActive(true);
         nightLight.SetActive(true);
         nLight.intensity = 0f; 
+        
+        StartCoroutine(LerpAmbientLighting(daySkyColor, nightSkyColor, dayEquatorColor, nightEquatorColor, dayGroundColor, nightGroundColor));
 
         if (nightSkybox != null) RenderSettings.skybox = nightSkybox;
 
@@ -414,6 +428,8 @@ public class DayManager : MonoBehaviour
         dayLight.SetActive(true);
         nightLight.SetActive(true);
         dLight.intensity = 0f; 
+        
+        StartCoroutine(LerpAmbientLighting(nightSkyColor, daySkyColor, nightEquatorColor, dayEquatorColor, nightGroundColor, dayGroundColor));
 
         // Swap to the beautiful morning skybox immediately
         if (daySkybox != null) RenderSettings.skybox = daySkybox;
@@ -485,5 +501,34 @@ public class DayManager : MonoBehaviour
     public void SetTimeToNight()
     {
         clockText.text = "20:00";
+    }
+    
+    private IEnumerator LerpAmbientLighting(Color startSky, Color endSky, Color startEq, Color endEq, Color startGnd, Color endGnd)
+    {
+        Debug.Log("starting the lerp");
+        float elapsed = 0f;
+
+        while (elapsed < transitionDuration)
+        {
+            // --- FIX: Use unscaledDeltaTime so it runs even if Time.timeScale is 0 ---
+            elapsed += Time.unscaledDeltaTime;
+            
+            // Calculate what percentage of the transition is complete (0.0 to 1.0)
+            float t = elapsed / transitionDuration; 
+
+            // Lerp all three colors simultaneously
+            RenderSettings.ambientSkyColor = Color.Lerp(startSky, endSky, t);
+            RenderSettings.ambientEquatorColor = Color.Lerp(startEq, endEq, t);
+            RenderSettings.ambientGroundColor = Color.Lerp(startGnd, endGnd, t);
+
+            // Wait until the next frame before continuing the loop
+            yield return null; 
+        }
+
+        // Lock in the exact final colors just in case the math slightly overshoots
+        RenderSettings.ambientSkyColor = endSky;
+        RenderSettings.ambientEquatorColor = endEq;
+        RenderSettings.ambientGroundColor = endGnd;
+        Debug.Log("ending the lerp");
     }
 }
