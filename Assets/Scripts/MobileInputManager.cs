@@ -49,6 +49,13 @@ public class MobileInputManager : MonoBehaviour
         else if (Input.GetMouseButton(0))
         {
             HandleTouchMove(Input.mousePosition);
+            
+            // --- THE SQUEEZE LOGIC ---
+            // This only runs if the can is already floating and locked in Squeeze Mode
+            if (currentItem != null && currentItem.isSqueezingMode)
+            {
+                currentItem.PerformSqueeze(Time.deltaTime);
+            }
         }
         else if (Input.GetMouseButtonUp(0))
         {
@@ -58,11 +65,15 @@ public class MobileInputManager : MonoBehaviour
 
     void HandleTouchStart(Vector2 screenPos)
     {
-        // --- MISSING FIX 1 APPLIED: Tap to shake ---
         if (currentItem != null && currentItem.isShakingMode)
         {
             currentItem.PerformShake();
             return;
+        }
+        
+        if (currentItem != null && currentItem.isSqueezingMode)
+        {
+            return; 
         }
 
         Ray ray = mainCam.ScreenPointToRay(screenPos);
@@ -99,18 +110,17 @@ public class MobileInputManager : MonoBehaviour
 
     void HandleTouchMove(Vector2 screenPos)
     {
+        // 1. Lock movement entirely if we are using a tool (Shaker or Spray Can)
         if (currentItem != null && currentItem.isShakingMode) return;
+        if (currentItem != null && currentItem.isSqueezingMode) return; 
         
+        // 2. Handle Carving
         if (isCarving && currentItem != null)
         {
             Ray ray = mainCam.ScreenPointToRay(screenPos);
             bool isStillOverDispenser = false;
             
-            // --- NEW: The "Fat Finger" SphereCastAll ---
-            // This fires a thick cylinder from the camera. We use 'All' so that if it hits 
-            // a neighboring tub first, it still checks if our active tub is inside the cylinder.
             RaycastHit[] hits = Physics.SphereCastAll(ray, colliderForgivenessRadius, 100f, dispenserLayer);
-            
             foreach (RaycastHit hit in hits)
             {
                 if (hit.collider == activeDispenserCollider)
@@ -120,7 +130,6 @@ public class MobileInputManager : MonoBehaviour
                 }
             }
 
-            // If the thick cylinder completely misses the target collider, cancel the carve!
             if (!isStillOverDispenser)
             {
                 CancelDrag();
@@ -145,11 +154,13 @@ public class MobileInputManager : MonoBehaviour
                 if (jelly != null) jelly.PlayBounce();
             }
         }
+        // 3. Handle Dragging (This is where the Whipped Cream goes)
         else if (isDraggingItem && currentItem != null)
         {
             currentItem.MoveTo(screenPos);
             HandleEdgeScrolling(screenPos);
         }
+        // 4. Handle Camera Panning (Only if not holding anything)
         else
         {
             float deltaX = screenPos.x - lastTouchPos.x;
@@ -164,19 +175,28 @@ public class MobileInputManager : MonoBehaviour
     {
         if (currentItem != null && currentItem.isShakingMode) return;
         
+        // 1. If we let go while squeezing, just pause the squeezing (return early so we don't clear the item)
+        if (currentItem != null && currentItem.isSqueezingMode)
+        {
+            return; 
+        }
+
+        // 2. Try to drop the item on the plate
         if ((isCarving || isDraggingItem) && currentItem != null)
         {
             currentItem.TryPlace();
         }
         
-        if (currentItem != null && currentItem.isShakingMode)
+        // 3. CRITICAL FIX: If TryPlace() successfully turned the can into SqueezeMode, STOP HERE!
+        // We do not want to run the cleanup code below, or the game will forget about the can.
+        if (currentItem != null && currentItem.isSqueezingMode)
         {
             isDraggingItem = false;
             isCarving = false;
             return; 
         }
 
-        // --- FIX: Turn the dispenser visuals back on when you let go ---
+        // 4. Cleanup (Only runs if it didn't enter SqueezeMode or ShakingMode)
         if (activeDispenserCollider != null)
         {
             IngredientDispenser activeDisp = activeDispenserCollider.GetComponent<IngredientDispenser>();

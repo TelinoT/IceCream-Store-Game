@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 1540390768606017472}
   - component: {fileID: 4362192296862403206}
   - component: {fileID: 2960349110675149889}
-  - component: {fileID: 1216017300525676586}
   - component: {fileID: 5023552948159313825}
+  - component: {fileID: 1216017300525676586}
   m_Layer: 0
   m_Name: DraggableSyrup
   m_TagString: Untagged
@@ -110,25 +110,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.08937441, y: 0.3195422, z: 0.08586669}
   m_Center: {x: 0.000000011175871, y: 0.1597711, z: 0.0004332643}
---- !u!114 &1216017300525676586
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3115520146281188988}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 589210fd8147f4efbbf225e7dcae6bf2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isShakingMode: 0
-  isCone: 0
-  yOffset: 1.08
-  yOffsetCup: 0.01
-  yOffsetCone: 0.01
-  raycastHeightOffset: 5
-  maxRaycastDistance: 10
 --- !u!114 &5023552948159313825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -143,3 +124,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   duration: 0.2
   splatMultipliers: {x: 1.05, y: 0.9, z: 1.05}
+--- !u!114 &1216017300525676586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3115520146281188988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 589210fd8147f4efbbf225e7dcae6bf2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeToFullGrow: 1.5
+  isSqueezingMode: 0
+  isShakingMode: 0
+  isCone: 0
+  yOffset: 1.08
+  yOffsetCup: 0.01
+  yOffsetCone: 0.01
+  raycastHeightOffset: 5
+  maxRaycastDistance: 10

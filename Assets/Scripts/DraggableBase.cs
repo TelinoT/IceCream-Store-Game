@@ -9,6 +9,12 @@ public class DraggableBase : MonoBehaviour
     private float carveHeight = 1.2f; // Tweak this so it sits perfectly above your tubs
     private float activeYOffset;
     
+    [Header("Hold To Grow Settings")]
+    public float timeToFullGrow = 1.5f; 
+    public bool isSqueezingMode = false;
+    private float currentGrowTime = 0f;
+    private GameObject spawnedWhippedCream;
+    
     public bool isShakingMode = false;
     private int shakeCount = 0;
     private int requiredShakes = 3;
@@ -41,6 +47,8 @@ public class DraggableBase : MonoBehaviour
     private Vector3 targetPos = new Vector3();
     
     private Vector3 originalScale;
+    
+    private Vector3 targetWhippedCreamScale;
     
     public void Initialize(IceCreamIngredient ingredient)
     {
@@ -253,6 +261,10 @@ public class DraggableBase : MonoBehaviour
                         case ToppingInteraction.TracePath:
                             SyrupManager.Instance.EnterSyrupMode(this.gameObject, ingredient);
                             break;
+                            
+                        case ToppingInteraction.HoldToGrow:
+                            EnterSqueezeMode();
+                            break;
                     }
                 
                     return;
@@ -417,6 +429,111 @@ public class DraggableBase : MonoBehaviour
         placed = true;
         AudioManager.Instance.Play("SprinklesDrop");
         TaskManager.Instance.ReportProgress(TaskGoalType.AddSprinkles, 1);
+        Destroy(gameObject);
+    }
+    
+private void EnterSqueezeMode()
+    {
+        isSqueezingMode = true;
+        
+        float currentIceCreamHeight = 0f;
+        float centerX = 0f;
+        float centerZ = 0f;
+
+        if (stack != null && stack.addedObjects.Count > 0)
+        {
+            // 1. Get X and Z from the Base (always index 0)
+            if (stack.addedObjects[0] != null)
+            {
+                centerX = stack.addedObjects[0].transform.localPosition.x;
+                centerZ = stack.addedObjects[0].transform.localPosition.z;
+            }
+
+            // 2. Find the physically highest object in the stack
+            float highestY = -999f;
+            IceCreamIngredient topIngredient = null;
+            
+            for (int i = 0; i < stack.addedObjects.Count; i++)
+            {
+                if (stack.addedObjects[i] != null)
+                {
+                    float objY = stack.addedObjects[i].transform.localPosition.y;
+                    
+                    if (objY > highestY)
+                    {
+                        highestY = objY;
+                        if (i < stack.addedIngredients.Count) 
+                        {
+                            topIngredient = stack.addedIngredients[i];
+                        }
+                    }
+                }
+            }
+            
+            float heightOffset = (topIngredient != null) ? topIngredient.stackHeight : 0.45f;
+            currentIceCreamHeight = highestY + heightOffset;
+        }
+        
+        // 3. Spawn the whipped cream FIRST and parent it to the stack
+        spawnedWhippedCream = Instantiate(ingredient.prefab, stack.visualParent);
+        
+        Vector3 creamLocalPos = new Vector3(centerX, currentIceCreamHeight, centerZ);
+        spawnedWhippedCream.transform.localPosition = creamLocalPos;
+        
+        targetWhippedCreamScale = ingredient.prefab.transform.localScale;
+        spawnedWhippedCream.transform.localScale = Vector3.zero;
+        
+        // --- THE FIX: Closer Placement & Auto-Aiming ---
+        Vector3 viewRight = Camera.main.transform.right;
+        Vector3 viewForward = Camera.main.transform.forward;
+        
+        // 4. Position: Brought much closer (0.15f) and raised up (0.25f) so it points downward!
+        transform.position = spawnedWhippedCream.transform.position + (viewRight * 0.15f) + (Vector3.up * 0.25f) - (viewForward * 0.05f);
+        
+        // 5. Rotation: Auto-Aim the nozzle!
+        // Get the mathematical direction from the can's new position straight to the cream
+        Vector3 directionToCream = spawnedWhippedCream.transform.position - transform.position;
+        
+        // Quaternion.LookRotation takes (Forward Direction, Upwards Direction). 
+        // We force the Z-axis (front) to face the camera, and the Y-axis (nozzle) to face the cream!
+        transform.rotation = Quaternion.LookRotation(-viewForward, directionToCream);
+        
+        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, 135, transform.rotation.eulerAngles.z);
+    }
+
+    public void PerformSqueeze(float deltaTime)
+    {
+        if (isFinishing || !isSqueezingMode) return;
+
+        currentGrowTime += deltaTime;
+        float progress = Mathf.Clamp01(currentGrowTime / timeToFullGrow);
+
+        if (spawnedWhippedCream != null)
+        {
+            float easeT = progress * progress * (3f - 2f * progress); 
+            
+            // --- CHANGED: Lerp to its natural target scale ---
+            spawnedWhippedCream.transform.localScale = Vector3.Lerp(Vector3.zero, targetWhippedCreamScale, easeT);
+        }
+
+        if (progress >= 1f)
+        {
+            isFinishing = true;
+            Invoke("FinishSqueezing", 0.1f); 
+        }
+    }
+
+    private void FinishSqueezing()
+    {
+        placed = true;
+        
+        // Log the final whipped cream into the recipe logic
+        stack.AddIngredient(ingredient, spawnedWhippedCream);
+        
+        AudioManager.Instance.Play("BaseDrop"); 
+        TaskManager.Instance.ReportProgress(TaskGoalType.AddSprinkles, 1); 
+        
+        // Delete the spray can model
         Destroy(gameObject);
     }
 }

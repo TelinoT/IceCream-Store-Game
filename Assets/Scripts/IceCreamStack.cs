@@ -210,4 +210,9 @@ public class IceCreamStack : MonoBehaviour
 
         return toppingCopy.Count == 0;
     } 
+    
+    public float GetCurrentHeight()
+    {
+        return currentHeight;
+    }
 }

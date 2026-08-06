@@ -2,7 +2,7 @@ using UnityEngine;
 
 public enum IngredientType { Base, Flavor, Topping }
 
-public enum ToppingInteraction { InstantDrop, Shaker, TracePath }
+public enum ToppingInteraction { InstantDrop, Shaker, TracePath, HoldToGrow }
 
 [CreateAssetMenu(fileName = "NewIngredient", menuName = "IceCream/Ingredient")]
 public class IceCreamIngredient : ScriptableObject
