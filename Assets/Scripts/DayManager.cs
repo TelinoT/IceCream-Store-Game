@@ -10,6 +10,9 @@ public class DayManager : MonoBehaviour
     
     public float transitionDuration = 2.5f;
     
+    [HideInInspector] public bool isWaitingToOpen = false;
+    [HideInInspector] public bool isWaitingToClose = false;
+    
     [Header("Ambient Lighting: Day")]
     public Color daySkyColor = new Color32(114, 145, 209, 255); 
     public Color dayEquatorColor = new Color32(243, 206, 187, 255);
@@ -76,6 +79,8 @@ public class DayManager : MonoBehaviour
     [Header("Camera Transition")]
     public Camera gameplayCamera;
     public Camera nightCameraTarget; 
+    public Camera signCameraTarget; 
+    public Transform gameplayCameraTarget;
     public float cameraTransitionDuration = 0.4f;
 
     private Vector3 originalCamPos;
@@ -155,7 +160,6 @@ public class DayManager : MonoBehaviour
         if (summaryPanel != null) summaryPanel.SetActive(false);
         if (nightHubPanel != null) nightHubPanel.SetActive(false);
         
-        // Only instantly snap the lights if we specifically ask to (like when the game boots up)
         if (instantSetup)
         {
             if (dayLight != null) 
@@ -165,13 +169,26 @@ public class DayManager : MonoBehaviour
             }
             if (nightLight != null) nightLight.SetActive(false);
             if (daySkybox != null) RenderSettings.skybox = daySkybox; 
+            
+            // --- FIX: Tell the game we are NOT waiting to open on Day 1! ---
+            isWaitingToOpen = false;
+            Time.timeScale = 1f;
+            FindObjectOfType<CustomerManager>().SpawnFirstCustomer();
         }
-
-        Time.timeScale = 1f;
-        FindObjectOfType<CustomerManager>().SpawnFirstCustomer();
+        else
+        {
+            // --- FIX: Only wait to open if it's Day 2+ ---
+            isWaitingToOpen = true;
+        }
         
         dayImage.SetActive(true);
         nightImage.SetActive(false);
+    }
+    
+    public void ConfirmShopOpened()
+    {
+        isWaitingToOpen = false;
+        StartCoroutine(MorningOpeningSequence());
     }
 
     public void CustomerServed()
@@ -204,6 +221,18 @@ public class DayManager : MonoBehaviour
         isBetweenDays = true; 
         Time.timeScale = 0f; 
         
+        DayTimeUI.SetActive(false); 
+        AudioManager.Instance.Play("Success"); 
+        
+        // Start gliding to the window!
+        StartCoroutine(GlideToSignForClose());
+    }
+
+    // NEW METHOD: Called by the ShopSign when it finishes flipping to "Closed"
+    public void ConfirmShopClosed()
+    {
+        isWaitingToClose = false;
+        
         int dailyCoins = EconomyManager.Instance.coins - coinsAtStartOfDay;
         int dailyXP = EconomyManager.Instance.xp - xpAtStartOfDay;
         int totalBank = EconomyManager.Instance.coins;
@@ -213,8 +242,6 @@ public class DayManager : MonoBehaviour
         currentDay++;
         SaveDay();
         
-        AudioManager.Instance.Play("Success"); 
-
         if (summaryPanel != null) 
         {
             summaryPanel.SetActive(true);
@@ -222,8 +249,6 @@ public class DayManager : MonoBehaviour
             
             StartCoroutine(TickUpStats(dailyCoins, dailyXP, totalBank));
         }
-        
-        DayTimeUI.SetActive(false);
         
         TaskManager.Instance.GenerateTomorrowTasks();
     }
@@ -350,12 +375,13 @@ public class DayManager : MonoBehaviour
     {
         if (gameplayCamera == null || nightCameraTarget == null) yield break;
 
-        originalCamPos = gameplayCamera.transform.position;
-        originalCamRot = gameplayCamera.transform.rotation;
-        originalCamFOV = gameplayCamera.fieldOfView;
-
         if (CameraSwipeMover.Instance != null) 
             CameraSwipeMover.Instance.enabled = false;
+
+        // --- FIX: Start from CURRENT position (at the sign), NOT originalCamPos! ---
+        Vector3 startPos = gameplayCamera.transform.position;
+        Quaternion startRot = gameplayCamera.transform.rotation;
+        float startFOV = gameplayCamera.fieldOfView;
 
         float elapsed = 0f;
         while (elapsed < cameraTransitionDuration)
@@ -364,9 +390,9 @@ public class DayManager : MonoBehaviour
             float t = elapsed / cameraTransitionDuration;
             float easeT = 1f - Mathf.Pow(1f - t, 3f); 
 
-            gameplayCamera.transform.position = Vector3.Lerp(originalCamPos, nightCameraTarget.transform.position, easeT);
-            gameplayCamera.transform.rotation = Quaternion.Lerp(originalCamRot, nightCameraTarget.transform.rotation, easeT);
-            gameplayCamera.fieldOfView = Mathf.Lerp(originalCamFOV, nightCameraTarget.fieldOfView, easeT);
+            gameplayCamera.transform.position = Vector3.Lerp(startPos, nightCameraTarget.transform.position, easeT);
+            gameplayCamera.transform.rotation = Quaternion.Lerp(startRot, nightCameraTarget.transform.rotation, easeT);
+            gameplayCamera.fieldOfView = Mathf.Lerp(startFOV, nightCameraTarget.fieldOfView, easeT);
 
             yield return null;
         }
@@ -459,8 +485,9 @@ public class DayManager : MonoBehaviour
     // --- NEW: Glide Camera Back Coroutine ---
     private IEnumerator GlideCameraToDay()
     {
-        if (gameplayCamera == null || nightCameraTarget == null) yield break;
+        if (gameplayCamera == null || signCameraTarget == null) yield break;
 
+        // Start from CURRENT position (in the Night Hub)
         Vector3 startPos = gameplayCamera.transform.position;
         Quaternion startRot = gameplayCamera.transform.rotation;
         float startFOV = gameplayCamera.fieldOfView;
@@ -472,19 +499,18 @@ public class DayManager : MonoBehaviour
             float t = elapsed / cameraTransitionDuration;
             float easeT = 1f - Mathf.Pow(1f - t, 3f); 
 
-            gameplayCamera.transform.position = Vector3.Lerp(startPos, originalCamPos, easeT);
-            gameplayCamera.transform.rotation = Quaternion.Lerp(startRot, originalCamRot, easeT);
-            gameplayCamera.fieldOfView = Mathf.Lerp(startFOV, originalCamFOV, easeT);
+            gameplayCamera.transform.position = Vector3.Lerp(startPos, signCameraTarget.transform.position, easeT);
+            gameplayCamera.transform.rotation = Quaternion.Lerp(startRot, signCameraTarget.transform.rotation, easeT);
+            gameplayCamera.fieldOfView = Mathf.Lerp(startFOV, signCameraTarget.fieldOfView, easeT);
 
             yield return null;
         }
 
-        gameplayCamera.transform.position = originalCamPos;
-        gameplayCamera.transform.rotation = originalCamRot;
-        gameplayCamera.fieldOfView = originalCamFOV;
+        gameplayCamera.transform.position = signCameraTarget.transform.position;
+        gameplayCamera.transform.rotation = signCameraTarget.transform.rotation;
+        gameplayCamera.fieldOfView = signCameraTarget.fieldOfView;
         
-        if (CameraSwipeMover.Instance != null) 
-            CameraSwipeMover.Instance.enabled = true;
+        isWaitingToOpen = true; 
     }
 
     private void SaveDay()
@@ -530,5 +556,77 @@ public class DayManager : MonoBehaviour
         RenderSettings.ambientEquatorColor = endEq;
         RenderSettings.ambientGroundColor = endGnd;
         Debug.Log("ending the lerp");
+    }
+    
+    private IEnumerator MorningOpeningSequence()
+    {
+        Vector3 startPos = gameplayCamera.transform.position;
+        Quaternion startRot = gameplayCamera.transform.rotation;
+        float startFOV = gameplayCamera.fieldOfView;
+
+        // Use the explicit gameplay target if assigned, otherwise fall back to originalCamPos
+        Vector3 targetPos = gameplayCameraTarget != null ? gameplayCameraTarget.position : originalCamPos;
+        Quaternion targetRot = gameplayCameraTarget != null ? gameplayCameraTarget.rotation : originalCamRot;
+        float targetFOV = gameplayCameraTarget != null ? (gameplayCameraTarget.GetComponent<Camera>() != null ? gameplayCameraTarget.GetComponent<Camera>().fieldOfView : originalCamFOV) : originalCamFOV;
+
+        float elapsed = 0f;
+        while (elapsed < cameraTransitionDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = elapsed / cameraTransitionDuration;
+            float easeT = 1f - Mathf.Pow(1f - t, 3f); 
+
+            // Glide precisely back to the counter position
+            gameplayCamera.transform.position = Vector3.Lerp(startPos, targetPos, easeT);
+            gameplayCamera.transform.rotation = Quaternion.Lerp(startRot, targetRot, easeT);
+            gameplayCamera.fieldOfView = Mathf.Lerp(startFOV, targetFOV, easeT);
+
+            yield return null;
+        }
+        
+        gameplayCamera.transform.position = targetPos;
+        gameplayCamera.transform.rotation = targetRot;
+        gameplayCamera.fieldOfView = targetFOV;
+
+        if (CameraSwipeMover.Instance != null) 
+            CameraSwipeMover.Instance.enabled = true;
+
+        Time.timeScale = 1f;
+        yield return new WaitForSeconds(1f); // 1-second breather before rush!
+
+        FindObjectOfType<CustomerManager>().SpawnFirstCustomer();
+    }
+    
+    private IEnumerator GlideToSignForClose()
+    {
+        if (gameplayCamera == null || signCameraTarget == null) yield break;
+
+        // Start from wherever the camera currently is
+        Vector3 startPos = gameplayCamera.transform.position;
+        Quaternion startRot = gameplayCamera.transform.rotation;
+        float startFOV = gameplayCamera.fieldOfView;
+
+        if (CameraSwipeMover.Instance != null) 
+            CameraSwipeMover.Instance.enabled = false;
+
+        float elapsed = 0f;
+        while (elapsed < cameraTransitionDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = elapsed / cameraTransitionDuration;
+            float easeT = 1f - Mathf.Pow(1f - t, 3f); 
+
+            gameplayCamera.transform.position = Vector3.Lerp(startPos, signCameraTarget.transform.position, easeT);
+            gameplayCamera.transform.rotation = Quaternion.Lerp(startRot, signCameraTarget.transform.rotation, easeT);
+            gameplayCamera.fieldOfView = Mathf.Lerp(startFOV, signCameraTarget.fieldOfView, easeT);
+
+            yield return null;
+        }
+
+        gameplayCamera.transform.position = signCameraTarget.transform.position;
+        gameplayCamera.transform.rotation = signCameraTarget.transform.rotation;
+        gameplayCamera.fieldOfView = signCameraTarget.fieldOfView;
+
+        isWaitingToClose = true;
     }
 }

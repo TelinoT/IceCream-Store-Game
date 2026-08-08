@@ -14,6 +14,6 @@ public class CarMover : MonoBehaviour
     void Update()
     {
         // Always move forward based on the car's local rotation
-        transform.Translate(Vector3.forward * speed * Time.deltaTime);
+        transform.Translate(Vector3.forward * speed * Time.unscaledDeltaTime);
     }
 }

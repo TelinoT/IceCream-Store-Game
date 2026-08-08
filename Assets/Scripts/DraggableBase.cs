@@ -457,8 +457,15 @@ private void EnterSqueezeMode()
             {
                 if (stack.addedObjects[i] != null)
                 {
+                    // This safely checks the type without risking an out-of-bounds crash
+                    if (i < stack.addedIngredients.Count && stack.addedIngredients[i] != null && stack.addedIngredients[i].type == IngredientType.Topping)
+                    {
+                        continue; 
+                    }
+            
+                    // Now float objY stays neatly inside the main flow, just like you had it!
                     float objY = stack.addedObjects[i].transform.localPosition.y;
-                    
+            
                     if (objY > highestY)
                     {
                         highestY = objY;
@@ -471,7 +478,12 @@ private void EnterSqueezeMode()
             }
             
             float heightOffset = (topIngredient != null) ? topIngredient.stackHeight : 0.45f;
-            currentIceCreamHeight = highestY + heightOffset;
+            currentIceCreamHeight = highestY + heightOffset + ingredient.stackHeight;
+
+            if (IceCreamStack.hasCone)
+            {
+                currentIceCreamHeight += 0.05f;
+            }
         }
         
         // 3. Spawn the whipped cream FIRST and parent it to the stack

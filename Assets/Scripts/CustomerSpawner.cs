@@ -73,6 +73,8 @@ public class CustomerSpawner : MonoBehaviour
         IceCreamIngredient chosenBase = availableBases[Random.Range(0, availableBases.Count)];
         newRecipe.baseCone = chosenBase;
         int totalPrice = chosenBase.price;
+        
+        Debug.Log(totalPrice);
 
         int scoopCount = forceScoopCount > 0 ? forceScoopCount : 1;
         if (forceScoopCount == 0)
@@ -90,6 +92,7 @@ public class CustomerSpawner : MonoBehaviour
             IceCreamIngredient chosenFlavor = unlockedFlavors[Random.Range(0, unlockedFlavors.Count)];
             newRecipe.flavors.Add(chosenFlavor);
             totalPrice += chosenFlavor.price;
+            Debug.Log(totalPrice);
             flavorNames.Add(chosenFlavor.ingredientName);
         }
 
@@ -122,9 +125,11 @@ public class CustomerSpawner : MonoBehaviour
         {
             newRecipe.toppings.Add(unlockedToppings[i]);
             totalPrice += unlockedToppings[i].price;
+            Debug.Log(totalPrice);
         }
         
         newRecipe.price = totalPrice;
+        Debug.Log(totalPrice);
 
         string flavorText = "";
         if (scoopCount == 1) flavorText = flavorNames[0];

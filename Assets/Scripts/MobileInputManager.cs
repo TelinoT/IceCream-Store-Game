@@ -173,9 +173,12 @@ public class MobileInputManager : MonoBehaviour
 
     void HandleTouchEnd()
     {
-        if (currentItem != null && currentItem.isShakingMode) return;
+        // 1. If we are shaking or squeezing, return early so we don't clear the item!
+        if (currentItem != null && currentItem.isShakingMode)
+        {
+            return; 
+        }
         
-        // 1. If we let go while squeezing, just pause the squeezing (return early so we don't clear the item)
         if (currentItem != null && currentItem.isSqueezingMode)
         {
             return; 
@@ -187,16 +190,15 @@ public class MobileInputManager : MonoBehaviour
             currentItem.TryPlace();
         }
         
-        // 3. CRITICAL FIX: If TryPlace() successfully turned the can into SqueezeMode, STOP HERE!
-        // We do not want to run the cleanup code below, or the game will forget about the can.
-        if (currentItem != null && currentItem.isSqueezingMode)
+        // 3. Stop here if it entered a special mode
+        if (currentItem != null && (currentItem.isSqueezingMode || currentItem.isShakingMode))
         {
             isDraggingItem = false;
             isCarving = false;
             return; 
         }
 
-        // 4. Cleanup (Only runs if it didn't enter SqueezeMode or ShakingMode)
+        // 4. Cleanup
         if (activeDispenserCollider != null)
         {
             IngredientDispenser activeDisp = activeDispenserCollider.GetComponent<IngredientDispenser>();

@@ -16,8 +16,8 @@ MonoBehaviour:
   type: 2
   prefab: {fileID: 1129279602020733609, guid: bd8ddc35df4829f4babab11663e174b5, type: 3}
   icon: {fileID: 0}
-  stackHeight: -1
+  stackHeight: -0.02
   price: 2
-  unlockID: 
+  unlockID: unlock_whippedcream
   dialoguePrefix: some
   interactionType: 3
