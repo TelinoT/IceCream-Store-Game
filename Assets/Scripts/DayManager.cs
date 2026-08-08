@@ -486,6 +486,11 @@ public class DayManager : MonoBehaviour
     private IEnumerator GlideCameraToDay()
     {
         if (gameplayCamera == null || signCameraTarget == null) yield break;
+        
+        if (CameraSwipeMover.Instance != null) 
+            CameraSwipeMover.Instance.enabled = false;
+        if (MobileInputManager.Instance != null) 
+            MobileInputManager.Instance.enabled = false;
 
         // Start from CURRENT position (in the Night Hub)
         Vector3 startPos = gameplayCamera.transform.position;
@@ -590,6 +595,11 @@ public class DayManager : MonoBehaviour
 
         if (CameraSwipeMover.Instance != null) 
             CameraSwipeMover.Instance.enabled = true;
+        
+        if (CameraSwipeMover.Instance != null) 
+            CameraSwipeMover.Instance.enabled = true;
+        if (MobileInputManager.Instance != null) 
+            MobileInputManager.Instance.enabled = true;
 
         Time.timeScale = 1f;
         yield return new WaitForSeconds(1f); // 1-second breather before rush!
@@ -600,6 +610,11 @@ public class DayManager : MonoBehaviour
     private IEnumerator GlideToSignForClose()
     {
         if (gameplayCamera == null || signCameraTarget == null) yield break;
+        
+        if (CameraSwipeMover.Instance != null) 
+            CameraSwipeMover.Instance.enabled = false;
+        if (MobileInputManager.Instance != null) 
+            MobileInputManager.Instance.enabled = false;
 
         // Start from wherever the camera currently is
         Vector3 startPos = gameplayCamera.transform.position;

@@ -54108,7 +54108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11ab37f6a75ae45c69323c4c4e3a0e34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flipDuration: 0.7
+  flipDuration: 0.5
 --- !u!65 &2029515964
 BoxCollider:
   m_ObjectHideFlags: 0
