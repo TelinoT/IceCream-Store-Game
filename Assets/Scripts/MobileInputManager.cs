@@ -85,6 +85,8 @@ public class MobileInputManager : MonoBehaviour
             IngredientDispenser dispenser = hit.collider.GetComponent<IngredientDispenser>();
             if (dispenser != null)
             {
+                if (dispenser.IsEmpty || dispenser.IsRefilling) return;
+                
                 bool needsBase = !IceCreamStack.Instance.HasBase();
                 bool isBase = dispenser.ingredient.type == IngredientType.Base;
                 
@@ -144,6 +146,12 @@ public class MobileInputManager : MonoBehaviour
 
             if (progress >= 1f)
             {
+                if (activeDispenserCollider != null)
+                {
+                    IngredientDispenser activeDisp = activeDispenserCollider.GetComponent<IngredientDispenser>();
+                    if (activeDisp != null) activeDisp.ConsumeScoop();
+                }
+                
                 isCarving = false;
                 isDraggingItem = true;
                 activeDispenserCollider = null; 

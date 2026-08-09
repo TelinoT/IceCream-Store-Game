@@ -575,7 +575,7 @@ public class DayManager : MonoBehaviour
         float targetFOV = gameplayCameraTarget != null ? (gameplayCameraTarget.GetComponent<Camera>() != null ? gameplayCameraTarget.GetComponent<Camera>().fieldOfView : originalCamFOV) : originalCamFOV;
 
         float elapsed = 0f;
-        while (elapsed < cameraTransitionDuration)
+        while (elapsed < cameraTransitionDuration + 1f)
         {
             elapsed += Time.unscaledDeltaTime;
             float t = elapsed / cameraTransitionDuration;
@@ -625,7 +625,7 @@ public class DayManager : MonoBehaviour
             CameraSwipeMover.Instance.enabled = false;
 
         float elapsed = 0f;
-        while (elapsed < cameraTransitionDuration)
+        while (elapsed < cameraTransitionDuration + 1f)
         {
             elapsed += Time.unscaledDeltaTime;
             float t = elapsed / cameraTransitionDuration;

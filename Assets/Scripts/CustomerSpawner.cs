@@ -98,14 +98,18 @@ public class CustomerSpawner : MonoBehaviour
 
         // --- NEW: WEIGHTED TOPPING MATH ---
         int toppingCount = 0;
+        
         float topRoll = Random.value;
+        
+        float toppingCrazeBonus = UpgradeManager.Instance.GetCurrentStatValueByID("topping_craze") / 100f;
+        topRoll += toppingCrazeBonus;
         
         if (unlockedToppings.Count > 0)
         {
-            if (topRoll <= 0.35f) toppingCount = 0;      // 35% chance for 0
-            else if (topRoll <= 0.75f) toppingCount = 1; // 40% chance for 1
-            else if (topRoll <= 0.95f) toppingCount = 2; // 20% chance for 2
-            else toppingCount = 3;                       // 5% chance for 3
+            if (topRoll <= 0.35f) toppingCount = 0;      // Base 35% chance for 0
+            else if (topRoll <= 0.75f) toppingCount = 1; // Base 40% chance for 1
+            else if (topRoll <= 0.95f) toppingCount = 2; // Base 20% chance for 2
+            else toppingCount = 3;                       // Base 5% chance for 3
         }
         
         // Cap it to how many unique toppings we actually have unlocked
