@@ -1,12 +1,15 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DecorationObject : MonoBehaviour
 {
     public int price;
     public DecorationCategory category; // For UI filtering
 
+    public Sprite uiIcon;
+
     [HideInInspector] 
-        public string DecorationID;
+    public string DecorationID;
 
     void Awake()
     {

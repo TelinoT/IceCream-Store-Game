@@ -39,7 +39,7 @@ public class CustomerOrder : MonoBehaviour
         if (desiredRecipe.orderLines.Length > 0)
         {
             string line = desiredRecipe.orderLines[Random.Range(0, desiredRecipe.orderLines.Length)];
-            speechText.text = line;
+            speechText.GetComponent<DialogueTypewriter>().ShowDialogue(line);
         }
 
         StartCoroutine(StartPatienceTimer());
@@ -149,12 +149,15 @@ public class CustomerOrder : MonoBehaviour
             if (desiredRecipe.correctResponseLines.Length > 0)
             {
                 string line = desiredRecipe.correctResponseLines[Random.Range(0, desiredRecipe.correctResponseLines.Length)];
-                speechText.text = line + (earnedTip > 0 ? $" (+{earnedTip}$ Tip!)" : "");
+                string fullLine = line + (earnedTip > 0 ? $" (+{earnedTip}$ Tip!)" : "");
+                
+                speechText.GetComponent<DialogueTypewriter>().ShowDialogue(fullLine);
             }
             
             if (activatedSweetTalker)
             {
-                speechText.text = "Hmm, this isn't what I ordered, but it looks delicious! I'll take it.";
+                speechText.GetComponent<DialogueTypewriter>().ShowDialogue("Hmm, this isn't what I ordered, but it looks delicious! I'll take it.");
+                
             }
             
             AudioManager.Instance.Play("Success");
@@ -165,8 +168,7 @@ public class CustomerOrder : MonoBehaviour
             if (desiredRecipe.wrongResponseLines.Length > 0)
             {
                 string line = desiredRecipe.wrongResponseLines[Random.Range(0, desiredRecipe.wrongResponseLines.Length)];
-                speechText.text = line;
-            }
+                speechText.GetComponent<DialogueTypewriter>().ShowDialogue(line);            }
             
             AudioManager.Instance.Play("Fail");
             StartCoroutine(AngryShake());
@@ -205,7 +207,11 @@ public class CustomerOrder : MonoBehaviour
         // 3. DO THE ANGRY ANIMATIONS
         if (outOfPatienceLines.Length > 0)
         {
-            speechText.text = outOfPatienceLines[Random.Range(0, outOfPatienceLines.Length)];
+            string line = outOfPatienceLines[Random.Range(0, outOfPatienceLines.Length)];
+            
+            // --- UPDATED: Use the Typewriter for angry departures! ---
+            speechText.GetComponent<DialogueTypewriter>().ShowDialogue(line);
+            
         }
         
         AudioManager.Instance.Play("Fail");

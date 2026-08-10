@@ -17,7 +17,7 @@ MonoBehaviour:
   description: 'A delicious, fruity new flavor.
 
     (+3$)'
-  icon: {fileID: 21300000, guid: 95264ad4d7535461b9f84fae3ddb6d5d, type: 3}
+  icon: {fileID: 21300000, guid: 8021d1f0d262c48c49f125725f4ecfa0, type: 3}
   category: 1
   requiredLevel: 2
   isOneTimeUnlock: 1

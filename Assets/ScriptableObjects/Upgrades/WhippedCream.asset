@@ -17,7 +17,7 @@ MonoBehaviour:
   description: 'The perfect hat for any scoop.
 
     (+2$)'
-  icon: {fileID: 21300000, guid: bbd8d744f407c4e1991f5df8aae99342, type: 3}
+  icon: {fileID: 21300000, guid: f1cb27501998d4677a4ee62a23202b89, type: 3}
   category: 2
   requiredLevel: 3
   isOneTimeUnlock: 1

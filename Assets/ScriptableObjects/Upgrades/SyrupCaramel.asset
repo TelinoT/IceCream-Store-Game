@@ -17,7 +17,7 @@ MonoBehaviour:
   description: 'Make the ice cream really sweet.
 
     (+1$)'
-  icon: {fileID: 21300000, guid: 3e181f027f85b437eadcee841c1e8cf6, type: 3}
+  icon: {fileID: 21300000, guid: 86dc8a1726b6141f19e21b83881b67b9, type: 3}
   category: 2
   requiredLevel: 1
   isOneTimeUnlock: 1

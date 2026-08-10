@@ -17,7 +17,7 @@ MonoBehaviour:
   description: 'One of the best combinations there is.
 
     (+4$)'
-  icon: {fileID: 21300000, guid: b27b3ed662cb3464d8faf579b15f68a1, type: 3}
+  icon: {fileID: 21300000, guid: 3ea8daee3ae0d4c15a577d2b7bc2be76, type: 3}
   category: 1
   requiredLevel: 4
   isOneTimeUnlock: 1

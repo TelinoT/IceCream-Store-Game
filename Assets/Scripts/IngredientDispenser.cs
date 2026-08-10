@@ -48,9 +48,12 @@ public class IngredientDispenser : MonoBehaviour
     void Start()
     {
         CheckUnlockState();
-        
-        progressSlider = progressBarContainer.GetComponent<Slider>();
 
+        if (progressBarContainer != null)
+        {
+            progressSlider = progressBarContainer.GetComponent<Slider>();
+        }
+        
         if (usesDepletion)
         {
             currentScoops = maxScoops;
