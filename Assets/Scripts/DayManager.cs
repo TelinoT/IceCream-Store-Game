@@ -441,6 +441,8 @@ public class DayManager : MonoBehaviour
         // Trigger the beautiful morning sunrise transitions!
         StartCoroutine(FadeLightingToDay());
         StartCoroutine(GlideCameraToDay());
+        
+        if (VIPManager.Instance != null) VIPManager.Instance.ResetDailyVIPLimit();
     }
 
     // --- NEW: Sunrise Lighting Coroutine ---

@@ -2213,7 +2213,7 @@ GameObject:
   - component: {fileID: 3404984596938911575}
   - component: {fileID: 3404984596946649305}
   m_Layer: 0
-  m_Name: TSP_Male_Character_02
+  m_Name: Jonas_Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

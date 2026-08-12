@@ -39,11 +39,34 @@ public class CustomerSpawner : MonoBehaviour
 
     public void SpawnCustomer()
     {
-        GameObject customer = Instantiate(customerPrefab, spawnPoint.position, Quaternion.identity);
+        // 1. Ask the VIP Manager if someone special is visiting today
+        VIPCharacterData readyVIP = VIPManager.Instance != null ? VIPManager.Instance.GetReadyVIP() : null;
+        
+        // 2. Pick the correct 3D Model
+        GameObject prefabToSpawn = readyVIP != null ? readyVIP.vipPrefab : customerPrefab;
+        
+        GameObject customer = Instantiate(prefabToSpawn, spawnPoint.position, Quaternion.identity);
         customer.transform.Rotate(0f, 90f, 0f);
         CustomerOrder order = customer.GetComponent<CustomerOrder>();
        
-        order.desiredRecipe = GenerateDynamicRecipe();
+        // 3. Inject VIP Data directly into the prefab
+        if (readyVIP != null)
+        {
+            order.isVIP = true;
+            order.vipData = readyVIP;
+            int encounterIndex = PlayerPrefs.GetInt("VIP_Encounter_" + readyVIP.characterName, 0);
+            order.currentEncounter = readyVIP.encounters[encounterIndex];
+            
+            // Allow story-specific recipes!
+            if (order.currentEncounter.requiresOrder)
+            {
+                order.desiredRecipe = order.currentEncounter.specificOrder != null ? order.currentEncounter.specificOrder : GenerateDynamicRecipe();
+            }
+        }
+        else
+        {
+            order.desiredRecipe = GenerateDynamicRecipe();
+        }
 
         Buttons.Instance.currentCustomer = order;
         

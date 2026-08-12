@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b760dc1ea6914a94a79c1e8374132d0, type: 3}
+  m_Name: Jonas_Data
+  m_EditorClassIdentifier: 
+  characterName: Jonas
+  vipPrefab: {fileID: 1978958919777931134, guid: ca6728dbc1bdf43fea9abac96af24e9e,
+    type: 3}
+  encounters:
+  - introLines:
+    - Hey there! I hear you are new here. I love seeing new businesses so I wanted
+      to check this place out.
+    - I am quite stuck behind a desk all day so I love seeing people be a bit more
+      adventorous.
+    - Honestly, I've been dreaming of starting my own thing, but the corporate paycheck
+      is a heavy anchor to drop.
+    optionA_Text: You should go for it!
+    optionB_Text: It's definitely a lot of hard work.
+    responseA_Lines:
+    - I don't know. For now let me see how the pros do it. I'll be watching how you
+      run this place for a bit and try some of your ice cream.
+    responseB_Lines:
+    - Yeah, you're right. For now let me see how the pros do it. I'll be watching
+      how you run this place for a bit and try some of your ice cream.
+    requiresOrder: 1
+    specificOrder: {fileID: 0}
+    taskToAssign: {fileID: 11400000, guid: 63ed99c9379014d1db7983825c0c40b4, type: 2}

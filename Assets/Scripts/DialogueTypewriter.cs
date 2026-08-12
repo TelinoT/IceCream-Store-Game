@@ -17,6 +17,8 @@ public class DialogueTypewriter : MonoBehaviour
     public int blipFrequency = 2; // Plays a sound every X letters (so it's not too annoying)
 
     private Coroutine typingCoroutine;
+    
+    public bool isTyping = false;
 
     void Awake()
     {
@@ -41,10 +43,14 @@ public class DialogueTypewriter : MonoBehaviour
             StopCoroutine(typingCoroutine);
         }
         textMesh.maxVisibleCharacters = textMesh.text.Length;
+        
+        isTyping = false;
     }
 
     private IEnumerator TypeRoutine(string textToType)
     {
+        isTyping = true;
+        
         // Set the text, but hide all the characters initially
         textMesh.text = textToType;
         textMesh.maxVisibleCharacters = 0;
@@ -86,5 +92,7 @@ public class DialogueTypewriter : MonoBehaviour
 
             visibleCount++;
         }
+        
+        isTyping = false;
     }
 }
