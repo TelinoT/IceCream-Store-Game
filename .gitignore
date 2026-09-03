@@ -73,3 +73,27 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# macOS
+.DS_Store
+._*
+
+# JetBrains Rider / IntelliJ project files
+.idea/
+
+# VS Code
+.vscode/
+
+# Xcode build output (generated when building the iOS player via Xcode)
+xcuserdata/
+*.xcuserstate
+*.xcworkspace/xcuserdata/
+*.ipa
+*.dSYM
+*.dSYM.zip
+
+# iOS signing material — never commit these
+*.p12
+*.mobileprovision
+*.cer
+*.certSigningRequest
